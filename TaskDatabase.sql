@@ -4,13 +4,19 @@ USE CollaborationAndMangementTool ;
 
 CREATE TABLE IF NOT EXISTS users (
     userId INT AUTO_INCREMENT PRIMARY KEY,
-    userName VARCHAR(100) NOT NULL,
+    userName VARCHAR(100) NOT NULL UNIQUE,
     role ENUM('Team Member', 'Project Manager', 'Supervisor') NOT NULL DEFAULT 'Team Member'
 );
 
 CREATE TABLE IF NOT EXISTS projects (
     projectId INT AUTO_INCREMENT PRIMARY KEY,
-    projectName VARCHAR(255) NOT NULL
+    projectName VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT NULL,
+    startDate DATE NULL,
+    expectedEndDate DATE NULL,
+    status ENUM('active', 'completed', 'pending') NOT NULL DEFAULT 'pending',
+    createdBy INT NOT NULL,
+    FOREIGN KEY (createdBy) REFERENCES users(userId) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS milestones (
@@ -38,6 +44,6 @@ CREATE TABLE IF NOT EXISTS tasks (
 
     FOREIGN KEY (projectId) REFERENCES projects(projectId) ON DELETE CASCADE,
     FOREIGN KEY (milestoneId) REFERENCES milestones(milestoneId) ON DELETE SET NULL,
-    FOREIGN KEY (AssignedTo) REFERENCES users(userId) ON DELETE SET NULL,
+    FOREIGN KEY (assignedTo) REFERENCES users(userId) ON DELETE SET NULL,
     FOREIGN KEY (createdBy) REFERENCES users(userId) ON DELETE RESTRICT
 );
