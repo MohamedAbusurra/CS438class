@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Project</title>
+</head>
+<body>
+
+    <div style="text-align: center;">
+
+        <a href="index.html">Back to Home</a>
+        <hr>
+
+        <h1>Create New Project</h1>
+
+        <form action="#" method="post">
+            <p>
+                <label for="projectName">Project Name:</label><br>
+                <input type="text" id="projectName" name="projectName" required>
+            </p>
+            <p>
+                <label for="projectDescription">Description:</label><br>
+                <textarea id="projectDescription" name="projectDescription" rows="3" cols="30"></textarea>
+            </p>
+            <p>
+                <label for="startDate">Start Date:</label><br>
+                <input type="date" id="startDate" name="startDate">
+            </p>
+            <p>
+                <label for="expectedEndDate">End Date:</label><br>
+                <input type="date" id="expectedEndDate" name="expectedEndDate">
+            </p>
+            <p>
+                <label for="teamEmails">Assign Team Members (Enter emails, one per line):</label><br>
+                <textarea id="teamEmails" name="teamEmails" rows="3" cols="30"></textarea>
+            </p>
+            <p>
+                <label for="milestoneTitles">Initial Milestones (Enter titles, one per line):</label><br>
+                 <textarea id="milestoneTitles" name="milestoneTitles" rows="3" cols="30"></textarea>
+            </p>
+            <button type="submit">Create Project</button>
+        </form>
+
+    </div>
+
+</body>
+</html>
