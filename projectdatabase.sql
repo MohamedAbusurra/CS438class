@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS users (
     role ENUM('Team Member', 'Project Manager', 'Supervisor') NOT NULL DEFAULT 'Team Member'
 );
 
-
 CREATE TABLE IF NOT EXISTS projects (
     projectId INT AUTO_INCREMENT PRIMARY KEY,
     projectName VARCHAR(255) NOT NULL UNIQUE,
@@ -64,4 +63,37 @@ CREATE TABLE IF NOT EXISTS taskDependencies (
     dependencyType ENUM('Finish Then Start', 'Start After Start', 'Finish After Finish', 'Finish After Start') NOT NULL DEFAULT 'Finish Then Start',
     FOREIGN KEY (taskId) REFERENCES tasks(taskId) ON DELETE CASCADE,
     FOREIGN KEY (dependsOnTaskId) REFERENCES tasks(taskId) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS projectMembers (
+    projectMemberId INT AUTO_INCREMENT PRIMARY KEY,
+    projectId INT NOT NULL,
+    userId INT NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'Team Member',
+    UNIQUE KEY uk_project_user (projectId, userId),
+    FOREIGN KEY (projectId) REFERENCES projects(projectId) ON DELETE CASCADE,
+    FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS files (
+    fileId INT AUTO_INCREMENT PRIMARY KEY,
+    projectId INT NOT NULL,
+    fileName VARCHAR(255) NOT NULL,
+    filePath VARCHAR(512) NOT NULL UNIQUE,
+    uploadedBy INT NULL,
+    uploadDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (projectId) REFERENCES projects(projectId) ON DELETE CASCADE,
+    FOREIGN KEY (uploadedBy) REFERENCES users(userId) ON DELETE SET NULL
+);
+
+CREATE TABLE IF NOT EXISTS fileVersions (
+    versionId INT AUTO_INCREMENT PRIMARY KEY,
+    fileId INT NOT NULL,
+    versionNumber INT NOT NULL,
+    versionPath VARCHAR(512) NOT NULL UNIQUE,
+    changeTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    changedBy INT NULL,
+    UNIQUE KEY uk_file_version (fileId, versionNumber),
+    FOREIGN KEY (fileId) REFERENCES files(fileId) ON DELETE CASCADE,
+    FOREIGN KEY (changedBy) REFERENCES users(userId) ON DELETE SET NULL
 );
