@@ -1,29 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Generate Reports</title>
+    <title>Report</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div style="text-align: center;">
-
-        <a href="index.html">Back to Home</a>
+    <div class="main-box">
+        <p><a href="project_dashboard.html">Back</a></p>
         <hr>
-
-        <h1>Generate Reports</h1>
-        <p>(Supervisor Access Only)</p>
-
+        <h1>Report</h1>
         <form action="#" method="post">
-            <p>
-                <label for="reportProject">Select Project:</label><br>
-                <select id="reportProject" name="projectId">
-                    <option value="">-- Choose Project --</option>
+             <p>
+                <label for="reportType">Type</label>
+                <select id="reportType" name="reportType">
+                    <option>Summary</option>
+                    <option>Tasks</option>
                 </select>
             </p>
-            <button type="submit">Generate PDF Report</button>
+            <button type="submit">Generate</button>
         </form>
-
     </div>
-
 </body>
 </html>

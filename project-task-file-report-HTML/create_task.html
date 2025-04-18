@@ -1,62 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Task</title>
+    <title>New Task</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div style="text-align: center;">
-
-        <a href="tasks.html">Back to Task List</a>
+    <div class="main-box">
+        <p><a href="tasks.html">Back</a></p>
         <hr>
-
-        <h1>Create Task</h1>
-
+        <h1>New Task</h1>
         <form action="#" method="post">
             <p>
-                <label for="taskTitle">Task Title:</label><br>
-                <input type="text" id="taskTitle" name="taskTitle" required>
+                <label for="taskTitle">Task</label>
+                <input type="text" id="taskTitle" name="taskTitle">
             </p>
             <p>
-                <label for="taskDescription">Description:</label><br>
-                <textarea id="taskDescription" name="taskDescription" rows="3" cols="30"></textarea>
-            </p>
-            <p>
-                <label for="milestoneId">Milestone:</label><br>
-                <select id="milestoneId" name="milestoneId">
-                    <option value="">-- Select Milestone --</option>
-                </select>
-            </p>
-            <p>
-                <label for="assignedTo">Assigned To:</label><br>
-                <select id="assignedTo" name="assignedTo">
-                    <option value="">-- Unassigned --</option>
-                </select>
-            </p>
-            <p>
-                <label for="importance">Importance:</label><br>
-                <select id="importance" name="importance">
-                    <option value="normal">Normal</option>
-                    <option value="high">High</option>
-                </select>
-            </p>
-            <p>
-                <label for="status">Status:</label><br>
+                <label for="status">Status</label>
                 <select id="status" name="status">
-                    <option value="not begun">Not Begun</option>
-                    <option value="in progress">In Progress</option>
-                    <option value="finished">Finished</option>
-                    <option value="Blocked">Blocked</option>
+                    <option>Not Begun</option>
+                    <option>In Progress</option>
+                    <option>Finished</option>
                 </select>
             </p>
-            <p>
-                <label for="dueDate">Due Date:</label><br>
-                <input type="date" id="dueDate" name="dueDate">
-            </p>
-            <button type="submit">Create Task</button>
+            <button type="submit">Add</button>
         </form>
-
     </div>
-
 </body>
 </html>
