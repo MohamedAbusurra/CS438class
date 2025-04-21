@@ -9,16 +9,21 @@ class project(db.model):
     """
     __tablename__ = 'projects'
 
-    STATUS_OPTIONS = ["active","completed","pending","on hold","cancelled"]
+    STATUS_OPTIONS = [ "active","completed ","pending ", "on hold","cancelled" ]
 
-    id = db.Column(db.Integer, primary_key=True)
-    project_name = db.Column(db.String(100), nullable =False)
+    primary_key =  True
+    nullable = False 
+
+
+
+    id =  db.Column(db.Integer , primary_key )
+    project_name = db.Column(db.String(100) , nullable )
     description = db.Column(db.Text)
-    start_date = db.Column(db.Date,nullable=False)
-    expected_end_date = db.Column(db.Date,nullable=False)
-    status = db.Column(db.String(20),default="active")
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    created_by_id = db.Column(db.Integer,db.Foreignkey('users.id'))
+    start_date =  db.Column(db.Date,nullable)
+    expected_end_date = db.Column( db.Date,nullable)
+    status = db.Column(db.String(20), default="active")
+    created_at = db.Column(db.DateTime, default=lambda : datetime.now(timezone.utc))
+    created_by_id= db.Column(db.Integer,db.Foreignkey ('users.id'))
 
     files = db.relationship('File', backref='project' ,lazy=True)
 
@@ -36,10 +41,10 @@ class project(db.model):
         """
         self.project_name = project_name
         self.description = description
-        self.start_date = start_date
-        self.expected_end_date = expected_end_date
-        self.status = status if status in self.STATUS_OPTIONS else "active"
-        self.created_by_id = created_by_id
+        self.start_date = start_date 
+        self.expected_end_date  = expected_end_date  
+        self.status= status if status in  self.STATUS_OPTIONS else  "active"
+        self.created_by_id =created_by_id
     
     def to_dict(self) -> dict:
         """
@@ -53,7 +58,8 @@ class project(db.model):
             'project_name': self.project_name,
             'description' : self.description,
             'start_date': (
-                self.start_date.strftime('%Y-%m-%d') if self.start_date else None
+                 self.start_date.strftime('%Y-%m-%d' ) 
+                 if self.start_date else None 
             ),
             'expected_end_date': (
                 self.expected_end_date('%Y-%m-%d') 
@@ -61,5 +67,5 @@ class project(db.model):
                 else None
             ),
             'status': self.status,
-            
+
         }
