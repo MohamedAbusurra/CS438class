@@ -3,6 +3,7 @@ from typing import Optional, Dict, Any
 import json
 from models.database import db
 
+
 class Report(db.Model):
     __tablename__ = 'reports'
 

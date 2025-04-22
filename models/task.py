@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional
 from models.database import db
 
+
 class Task(db.Model):
     __tablename__ = 'tasks'
 
