@@ -1,113 +1,72 @@
 from datetime import datetime, timezone
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 import json
 from models.database import db
 
 class Report(db.Model):
-    """
-    Report class representing a performance report in the system.
-    """
     __tablename__ = 'reports'
 
-    # Report types
-    TYPE_PERFORMANCE = "performance"
-    TYPE_OPTIONS = [TYPE_PERFORMANCE]
-
-    # Report status
-    STATUS_PENDING = "pending"
-    STATUS_GENERATING = "generating"
-    STATUS_COMPLETED = "completed"
-    STATUS_FAILED = "failed"
-    STATUS_OPTIONS = [STATUS_PENDING, STATUS_GENERATING, STATUS_COMPLETED, STATUS_FAILED]
+    STATUS_OPTIONS = ["pending", "generating", "completed", "failed"]
+    TYPE_OPTIONS = ["performance"]
 
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('projects.id'), nullable=False)
-    report_type = db.Column(db.String(50), default=TYPE_PERFORMANCE)
-    status = db.Column(db.String(20), default=STATUS_PENDING)
+    report_type = db.Column(db.String(50), default="performance")
+    status = db.Column(db.String(20), default="pending")
     created_by_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     completed_at = db.Column(db.DateTime)
     file_path = db.Column(db.String(255))
-    progress = db.Column(db.Integer, default=0)  # Progress percentage (0-100)
-    
-    # Store report filters as JSON
+    progress = db.Column(db.Integer, default=0)
     _filters = db.Column(db.Text)
-    
-    # Relationships
+
     project = db.relationship('Project', backref='reports')
     created_by = db.relationship('User', backref='reports_created', foreign_keys=[created_by_id])
 
-    def __init__(self, project_id: int, report_type: str = TYPE_PERFORMANCE,
-                 created_by_id: Optional[int] = None, filters: Optional[Dict[str, Any]] = None):
-        """
-        Initialize a Report object.
-
-        Args:
-            project_id (int): ID of the project this report is for
-            report_type (str, optional): Type of report (default: performance)
-            created_by_id (int, optional): ID of the user who created the report
-            filters (dict, optional): Filters to apply to the report
-        """
-        self.project_id = project_id
-        
-        # Validate report type
+    def __init__(
+        self,
+        project_id: int,
+        report_type: str = "performance",
+        created_by_id: Optional[int] = None,
+        filters: Optional[Dict[str, Any]] = None
+    ):
         if report_type not in self.TYPE_OPTIONS:
-            raise ValueError(f"Invalid report type. Must be one of: {', '.join(self.TYPE_OPTIONS)}")
+            raise ValueError(f"Invalid report type. Choose from: {', '.join(self.TYPE_OPTIONS)}")
+
+        self.project_id = project_id
         self.report_type = report_type
-        
         self.created_by_id = created_by_id
-        self.status = self.STATUS_PENDING
+        self.status = "pending"
         self.progress = 0
-        
-        # Set filters
-        if filters:
-            self.filters = filters
-        else:
-            # Default filters - include all sections
-            self.filters = {
-                "include_completed_tasks": True,
-                "include_missed_deadlines": True,
-                "include_contributions": True,
-                "format": "pdf"  # Default format
-            }
+        self.filters = filters or {
+            "include_completed_tasks": True,
+            "include_missed_deadlines": True,
+            "include_contributions": True,
+            "format": "pdf"
+        }
 
     @property
     def filters(self) -> Dict[str, Any]:
-        """Get the filters as a dictionary."""
-        if self._filters:
-            return json.loads(self._filters)
-        return {}
+        return json.loads(self._filters) if self._filters else {}
 
     @filters.setter
     def filters(self, value: Dict[str, Any]):
-        """Set the filters from a dictionary."""
-        if value:
-            self._filters = json.dumps(value)
-        else:
-            self._filters = None
+        self._filters = json.dumps(value) if value else None
 
     def update_progress(self, progress: int):
-        """Update the report generation progress."""
         if 0 <= progress <= 100:
             self.progress = progress
             if progress == 100:
-                self.status = self.STATUS_COMPLETED
+                self.status = "completed"
                 self.completed_at = datetime.now(timezone.utc)
         else:
             raise ValueError("Progress must be between 0 and 100")
 
     def mark_as_failed(self):
-        """Mark the report as failed."""
-        self.status = self.STATUS_FAILED
+        self.status = "failed"
         self.completed_at = datetime.now(timezone.utc)
 
     def to_dict(self) -> Dict[str, Any]:
-        """
-        Convert report object to dictionary for serialization.
-
-        Returns:
-            dict: Dictionary representation of the report
-        """
         return {
             'id': self.id,
             'project_id': self.project_id,
