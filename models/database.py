@@ -37,7 +37,7 @@ def createSampleData():
         from models.user import User
         from models.project import Project
         from models.task import Task
-        from datatime import datetime , timedelta
+        from datetime import datetime , timedelta
 
 
         admin_user = User(

@@ -27,11 +27,11 @@ class project(db.model):
 
     files = db.relationship('File', backref='project' ,lazy=True)
 
-    def__init__(
+    def __init__(
         self,
         project_name: str,
         description: str,
-        start_date: datatime,
+        start_date: datetime,
         expected_end_date: Optional[datetime] = None,
         status: str = "active",
         created_by_id: Optinonal[int] = None,
