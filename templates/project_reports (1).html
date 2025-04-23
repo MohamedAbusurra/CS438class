@@ -1,0 +1,134 @@
+{% extends 'base.html' %} <!--inhertnce fro base html-->
+
+{% block title %}Reports - {{ project.project_name }} - CMT{% endblock %}
+
+{% block content %}
+  <!-- Main header for reports -->
+  <h1> Reports for {{ project.project_name }} </h1> <!-- TODO: maybe add some styling here -->
+
+  <!-- Nav links -->
+  <div style="margin-bottom: 20px">
+    <a href="/project/{{ project.id }}" 
+         class="btn btn-secondary">Back to Project</a>
+    <a href="#" 
+    onclick="toggleReportForm();" class="btn">Generate Report</a> <!-- Added JS function for fun -->
+  </div>
+
+  <div class="card">
+    <h2>Performance Reports</h2> <!-- This shows the reports table -->
+
+    {% if reports %}
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Created</th>
+
+          <th>Status</th>
+
+          <th>Format</th>
+
+          <th>Actions</th>
+        </tr>
+        {% for report in reports %}
+
+          <tr>
+            <td>{{ report.id }}</td>
+
+            <td>{{ report.created_at }}</td>
+
+            <td>{{ report.status }}</td>
+
+            <td>{{ report.filters.format|upper }}</td>
+            <td>
+              {% if report.status == 'completed' %}
+
+                <a href="/report/{{ report.id }}/download" 
+                   class="btn">
+                   Download</a>
+              {% else %}
+                <!-- Show status if not ready -->
+                <span>{{ report.status }}...</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+സ്
+      </table>
+    {% else %}
+      <!-- Friendly message for no reports -->
+      <p>No reports generated yet. Use the "Generate Report" button to create one.</p>
+    {% endif %}
+  </div>
+
+  <!-- Generate report form, hidden by default -->
+  <div id="generateReportForm" 
+  style="display:none;border:1px solid #ddd;
+  padding:20px;
+  margin-top:20px;">
+    <h3>Generate New Report</h3> <!-- Slightly different wording -->
+    <form method="post" 
+        action="/project/{{ project.id }}/generate_report">
+      <!-- Report sections checkboxes -->
+      <p><strong> Report Sections: </strong></p>
+      <p>
+        <input type="checkbox" 
+        id="completedTasks" 
+        name="include_completed_tasks" checked>
+        <label for="completedTasks">
+            Include Completed Tasks</label> <!-- Mixed naming -->
+      </p>
+      <p>
+        <input type="checkbox" 
+        id="missed_deadlines" 
+        name="include_missed_deadlines" checked>
+        <label for="missed_deadlines">Include Missed Deadlines</label>
+      </p>
+      <p>
+        <input type="checkbox" 
+        id="contributions" 
+        name="include_contributions" 
+        checked>
+        <label for="contributions">
+            Include Individual Contributions</label>
+      </p>
+
+      <!-- Format selection -->
+
+
+      <p> <strong> Report Format: </strong> </p>
+      <p>
+        <input type="radio"
+         id="pdf_format"
+          name="report_format" 
+         value="pdf" checked>
+        <label 
+        for="pdf_format">
+            PDF</label>
+        <br>
+        <input type="radio" 
+        id="csvFormat" 
+        name="report_format" value="csv">
+        <label for="csvFormat">CSV</label> <!-- Inconsistent ID naming -->
+      </p>
+
+      <!-- Buttons for form -->
+      <p>
+        <button type="submit" 
+        class="btn">
+        Generate Report</button>
+
+
+        <button type="button"
+         onclick="document.getElementById('generateReportForm').style.display='none';" class="btn btn-secondary">Cancel</button>
+      </p>
+    </form>
+  </div>
+
+  <!-- Quick script for toggling form -->
+  <script>
+    function toggleReportForm() {
+      let form = document.getElementById('generateReportForm');
+      form.style.display = 'block'; // Shows the form, probably could use toggle
+    }
+  </script>
+{% endblock %}
