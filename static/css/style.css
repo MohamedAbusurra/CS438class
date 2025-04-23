@@ -1,0 +1,80 @@
+
+/* I have follow the  Google style guide */
+
+body {
+    font-family: Arial  ,
+                 Helvetica,
+                 sans-serif; 
+     line-height: 1.6;
+     margin: 0; 
+    padding: 0;
+  }
+  
+  /* this is the headers and stuff */
+  h1,h2,h3 {
+      color: #333; /* dark gray feels OK  */
+  }
+  
+  a {
+    color: #4285f4;   /* Google blue, I love this color */
+
+    text-decoration:  none ;
+  }
+  
+  a:hover {
+    
+    text-decoration :  underline; 
+  }
+  
+  
+  table {
+    width: 100%;
+    border-collapse :   collapse;
+    margin: 20px 0px; 
+  }
+  
+  table, th, td {
+
+       border :   1px  solid #ddd ;
+  }
+  
+  th,td {
+    padding: 10px ;
+
+    text-align: left  ; 
+  }
+  
+  th {
+    background-color: #f1f1f1; /* we will use light gray for headers */
+
+    /* could later add some blod text her  */ 
+
+  }
+  
+  /* this is the form stuff */
+  input,select,  textarea {
+      padding:  8px ;
+      margin-bottom: 10px ; 
+      border: 1px solid #ddd ;
+    border-radius: 4px ;
+
+    width: 100%; 
+  }
+  
+  button  {
+
+    padding :  8px  16px ;
+
+
+    color: #fff; 
+    
+    background-color : #4285f4; /* good color*/
+
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; /* hand cursor for clicks */
+  }
+  
+  button:hover  {
+      background-color: #3367d6; /* darker blue */
+  }
