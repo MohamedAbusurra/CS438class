@@ -1,0 +1,91 @@
+{ % extends 'base.html '  %} <!--inherit from  the base html file-->
+
+
+
+{% block title %}
+
+  Create Project - CMT  <!-- TODO: maybe make
+                          title dynamic later -->
+{% endblock %}
+
+
+{% block content %}
+
+    <h1>Create New Project </h1>
+    
+    <!-- Card container for the form -->
+
+    <div class="card" 
+         style="padding: 20px ; ">   <!-- Added inline style -->
+
+        <form method= "post"  action="/create_project">
+            <!-- Project name input -->
+            <p>
+                <label  for="projName "> Project Name: </label>
+                <br> 
+                <input type="text " 
+                id=" projName" 
+                name="project_name " 
+
+                required placeholder="Enter project name ">
+                <!-- TODO:  Add limit  for name length -->
+            </p>
+            
+            <!-- Description input -->
+            <p>
+                <label for="project_description"> Description: </label> <br>
+
+                <textarea id="project_description"  
+                          name="projectDesc" 
+                         rows="4" 
+                         cols="50" 
+
+                         placeholder="What's this project about?">
+                     </textarea>  
+                
+            </p>
+            
+            <p>
+                <label  for="startDate"> Start Date: 
+
+                </label>  
+                <br>
+
+                <input type="date" 
+                       id="startDate"  
+                       name="start_date" >
+            </p>
+            
+        
+            <p>
+                <label for="end_date "> End Date (Optional):  
+
+                </label><br>
+
+                <input type="date"  
+                       id="end_date" 
+                       name="end_date">  
+                
+            </p>
+            
+            <!-- Form buttons -->
+            <p class="form-actions">  <!-- Added class for styling, might use  later -->
+
+                <button type = "submit " 
+                class="btn primary-btn"> Create Project
+                   </button>    <!-- Added  primary -btn class -->
+                <a  href = "/projects" 
+                class="btn  btn-secondary  cancelBtn ">Cancel  </a>  
+
+            </p>
+        </form>
+        
+        <!--Just if  we need to 
+        add something below-->
+         <div  class=" extra-space">  </div> 
+    </div> 
+
+    {% if error %}
+        <p class="error-message">{{ error }}</p>  <!-- Added error handling -->
+    {% endif %}
+{% endblock %}

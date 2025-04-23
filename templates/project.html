@@ -1,0 +1,250 @@
+{% extends 'base.html' %} <!--inherit from  the base html file-->
+
+{% block title %}
+
+ {{ project.project_name }} - CMT <!--fetch the project name from the database-->
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Project Header -->
+
+<h1>  {{  project.project_name  }} </h1> <!--get project name -->
+
+<!-- Navigation links-->
+
+
+<div   style = " margin-bottom:  20px " >
+
+  <a    href = "/project/ {{project.id}} /tasks  " 
+
+     class="btn">View Tasks </a>
+
+
+    <a href = "/project/ {{ project.id }} /reports " 
+
+
+       class="btn"> View Reports</a>
+      <a href="/projects " 
+
+      class ="btn btn-secondary " >Back to Projects </a>
+
+</div>
+
+<!-- Project details  -->
+
+<div   class=" card ">
+
+  <h2>Project Details</h2>
+
+  <!-- TODO: like we can make it pop later  -->
+
+    <p>  <strong>  
+         Description: 
+            </strong>
+                {{ project.description }}
+
+                </p>
+
+  <p> 
+    <strong>
+
+       Start Date: 
+         </strong>
+              {{ project.start_date }}
+
+               </p>
+
+      <p>
+        <strong>
+          Expected End Date: 
+         </strong>
+          {{ project.expected_end_date }}
+           </p>
+
+        <p>
+            <strong>
+            Status:
+             </strong> 
+
+             {{ project.status }}
+             </p>
+
+</div>
+
+<!-- this is like for the Recent Task -->
+<div  class = " card ">
+
+
+
+<h2> Recent  Tasks </h2>
+
+{% if tasks %}
+
+  <ul>
+  {% for task in tasks[:5]  %}
+
+    <li>
+
+      <strong>{{ task.title }}  
+
+      </strong> - {{ task.status }}
+
+      
+      <p> {{  task.description }}
+          
+      </p>
+
+       <p> Due:  {{ task.due_date  }}
+           
+       </p>
+
+    </li>
+
+  {% endfor %}
+  </ul>
+  <p> 
+            <a href="/project/ {{ project.id}} /tasks " >  
+             View all tasks
+
+             </a> </p>
+{% else %}
+  <p>No tasks created for this project yet.</p>
+
+  <!-- this quick link to create tasks-->
+
+  <p><a  href="/project/ {{ project.id}}  /tasks"> 
+            Create a task
+        </a></p>
+
+{% endif %}
+
+</div>
+
+
+<!-- Files -->
+
+<div class=card>
+
+  <h2>Project Files</h2>
+
+  <!-- we have Using inline JS in this line -->
+  <p> <a href="#" 
+         onclick= " document. getElementById ('upload_form').style.display ='block ' 
+         
+
+     return false;" 
+
+      class="btn">Upload File </a></p>
+
+  {% if files %}
+    <table>
+
+      <tr>
+        <th>File Name</th>
+
+        <th>Type</th>
+        <th>Size</th>
+        <th>Upload Date</th>
+
+        <th>Actions</th>
+      </tr>
+      <!-- Looping through files-->
+      {% for fileObj in files %}
+      <tr>
+
+         <td>{{   fileObj.file_name }}</td>
+
+         <td>{{ fileObj.file_type }} </td>
+
+           <td>{{  fileObj.formatted_size }}  </td>
+
+             <td>{{ fileObj.upload_date }} </td>
+        <td>
+          <a  href="/file/{{ fileObj.id }}/download " 
+
+                 class="btn">Download</a>
+          <!-- Added confirm dialog, hope it works -->
+          <a href ="/file/{{fileObj.id}}/delete " 
+
+             class =  "btn btn-secondary " 
+
+             onclick= " return confirm('Are you  sure you want  to delete  this file?')"
+             > Delete</a>
+
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+  {% else %}
+    <p>No files associated with  this project yet.</p>
+  {% endif %}
+</div>
+
+<!-- File upload form, hidden by default -->
+<div  id=" upload_form " 
+     style=" display:none  ;
+             border : 1px solid #ddd ; 
+             padding:20px ;
+             margin-top:20px " >
+             <!--this is for the border -->
+
+  <h3>  Upload File   </h3>
+  <form   method = "POST" 
+        action="/upload_file " 
+         enctype = "multipart/form-data  ">
+         <input type= "hidden " 
+                name="projectId " 
+
+                value="{{project.id}}">
+
+
+    <!-- File input  -->
+
+    <p>
+      <label for="fileInput">
+             Choose File:
+              </label><br>
+
+      <input  
+              type="file" 
+             id="fileInput"
+              name="file" 
+              required>
+    </p>
+
+    <p>
+      <label for="fileDescription">
+                  Description (Optional): 
+                  </label><br>
+
+      <!-- Made textarea a bit bigger  -->
+      <textarea id="fileDescription" 
+                 name="file_description" 
+                 rows="3"></textarea>
+
+    </p>
+
+    <!-- Buttons for form -->
+
+    <p>
+      <button type="submit" 
+              class="btn">Upload File</button>
+
+      <button  
+       type="button" 
+
+            onclick="document.getElementById('upload_form').style.display='none';" 
+
+              class= "btn btn-secondary"> 
+              Cancel
+              </button>
+    </p>
+  </form>
+</div>
+
+
+
+{% endblock %}

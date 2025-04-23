@@ -1,0 +1,67 @@
+{% extends 'base.html' %} <!--inherit from the  base.html-->
+
+{% block title % } My Projects {% endblock % }
+
+{% block content %}
+
+<h1>Projects Page</h1> <!--this the projecy page-->
+
+
+<a href="/create_project " 
+   class="btn">  New Project  </a>
+
+<div  class="card_container ">  <!-- I like calling it container,
+                                 sounds like something intersting -->
+
+  {% if projects %}
+
+    <table>
+
+      <tr>
+        <th>Project</th>
+
+        <th>Details</th> <!--Shortened this -->
+        <th>Started</th>
+        <th>Status</th>
+        <th>Stuff to Do</th> <!--Sounds less boring than the  "Actions" -->
+      </tr>
+
+      {% for proj in projects %} <!-- proj is shorter, easy  to type -->
+      <tr>
+        <td><a href="/project/ {{proj.id}} "> 
+                   {{ proj.project_name }} 
+                    </a></td>
+        <td>{{ proj.description }} </td>
+
+        <td>{{proj.start_date}}</td> 
+
+        <td>{{ proj.status }}</td>
+        <td>
+          <a href = "/project/ {{ proj.id }} " 
+
+              class="btn">
+
+                  Check it</a>
+
+          <!-- Delete button with a popup warning, took me ages to figure out -->
+          <a href="/project/{{proj.id}}/delete" 
+             class=btn-danger
+
+             onclick = " return confirm(' Sure you wanna delete the  {{ proj.project_name }} ?')" >
+             Delete
+             
+          </a>
+
+
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <!-- No projects? Let's make it friendly -->
+    <p>Nothing here yet! <a href="/create_project">
+                      Make your first project</a>.</p>
+
+  {% endif %}
+</div>
+{% endblock %}
