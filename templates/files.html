@@ -1,0 +1,180 @@
+{% extends 'base.html' %} <!--inherit from the base html file -->
+
+
+{%  block title % } File Management - CMT{% endblock % }
+
+{% block content % }
+
+  <h1> 
+    File Management 
+      
+  </h1>
+  
+  <!--we make Button to show the upload form-->
+  <p>
+    <a 
+       href="#" 
+       onclick="document.getElementById('upload_form'). style. display= 'block';
+             return false;" 
+
+       class= "btn"> 
+       Upload New File
+    </a>
+  </p>
+
+  <div class="card ">
+
+    {% if files %}
+
+      <!-- this Table to show all files -->
+
+      <table>
+        <tr>
+          <th>File Name</th>
+
+          <th>Project</th>
+
+          <th>Type</th>
+          <th>Size</th>
+
+          <th>Date Uploaded</th>
+
+          <th>Actions</th>
+        </tr>
+        {% for file in files %}
+          <tr>
+            <td>{{ file.file_name }}</td>
+            <td>
+              {% if file.project_id %}
+              
+                <a href="/project/ {{ file.project_id }} ">Project #{{ file.project_id }} </a>
+              {% else %}
+                No Project
+              {% endif %}
+            </td>
+
+            <td> {{ file.file_type }}  </td> <!-- this is the file type -->
+            <td> 
+                {{ file.formatted_size }} <!--this is the file size-->
+
+            </td>
+
+            <td>
+                {{ file.upload_date }} <!--this  is the date  uploaded-->
+            </td>
+
+            <td>
+              <!-- Download button -->
+
+              <a href="/file/ {{ file.id }} /download"
+
+                  class =" btn"> 
+
+                      Download</a>
+
+              <!-- Delete button with confirmation -->
+
+              <a href="/file/ {{ file.id }} /delete" 
+                 class="btn btn-secondary "
+
+                 onclick=" return confirm('Sure you want to delete {{ file.file_name }}?');">
+                 Delete
+                </a>
+            </td>
+          </tr>
+
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>No files yet! Click the "Upload New File" button to add one.</p>
+
+    {% endif %}
+  </div>
+
+  <!-- Upload form, hidden by default -->
+
+  <div   id="upload_form " style="display: none;
+                               border : 1px  solid #ccc;
+                               padding :15px; 
+                               marginTop: 20px;">
+
+    <h3> Upload a File </h3>
+
+    <!-- TODO: could like  add file size limit warning later -->
+     
+<!--this is the form to upload file-->
+    <form method="POST"
+          action="/upload_file"
+
+          enctype=" multipart/form-data "> 
+ 
+      <p>
+        <label
+         
+        for="fileInput " >
+
+            Choose a file:
+        </label><br>
+
+        <input type="file" 
+               id="fileInput" 
+               name="file" required>
+      </p>
+
+      <p>
+        <label for="description">Description (optional):
+
+        </label><br>
+        <textarea id="description" 
+                  name="file_description" 
+                  rows="3" 
+                  style="width:100%;"></textarea>
+      </p>
+
+      <p>
+        <label for="projectSelect">Link to Project (optional):
+
+        </label><br>
+        <select id="projectSelect" 
+                 name="project_id">
+
+          <option value="">No Project
+
+          </option>
+          {% for proj in projects %}
+
+            <option  value= "{{ proj.id }} "> 
+
+                {{ proj.project_name }} 
+            </option>
+
+          {% endfor %}
+        </select>
+      </p>
+
+      <!-- Buttons for submit and cancel -->
+      <p>
+        <button type="submit "
+
+                 class="btn">Upload File</button>
+
+
+        <button type="button" 
+                onclick="document.getElementById('upload_form').style.display='none';" 
+
+
+                class="btn btn-secondary">
+                Cancel
+            </button>
+      </p>
+
+    </form>
+  </div>
+
+ 
+
+
+
+  <br>
+
+{% endblock %}
