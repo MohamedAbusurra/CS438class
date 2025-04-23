@@ -1,0 +1,164 @@
+<!DOCTYPE html >
+
+
+<html lang= "en ">
+    
+<head>
+
+   <meta  charset  = "UTF-8 ">
+
+     <meta  name = "viewport " 
+
+    content="width=device-width, 
+    initial-scale=1.0">
+
+  <title>{% block title % } Collaboration Management Tool  { % endblock % }
+
+  </title>
+  <!-- Basic CSS styling -->
+
+  <style>
+
+    body  {
+      font-family: Arial,
+                   sans-serif;
+      margin: 0 ;
+
+      padding:  0 ;
+
+      line-height:  1.6;  /* Standard line hieght */
+    }
+
+    header {
+
+        background-color :  #4285f4;
+
+        color:  white;
+        padding:  1rem;
+        text-align : center;
+    }
+    .nav_bar  {        /* Changed name to be more cool */
+
+      
+      padding:  1rem ;
+
+      background-color :  #f1f1f1 ;  /* we have use white insted of black */
+
+
+      text-align: center;
+    }
+    .nav_bar  a  {
+      margin : 0  10px;
+      text-decoration: none ;
+
+      color: #333; /* Dark gray for links */
+
+      /* TODO: maybe add some effect later  */
+    }
+
+    .main_container  {
+
+      width: 90% ;
+
+      margin : auto; 
+
+      padding : 20px;
+
+    }
+    .btn  {
+      display :  inline-block;
+      background : #4285f4; /* Same blue as header */
+      color:  white ;
+
+      padding: 8px 16px ;
+
+      text-decoration : none ;
+      border-radius: 4px ;
+      
+    }
+    .btnSecondary {
+      background: #6c757d; 
+
+      color: white;
+
+    }
+    .cardBox { 
+  
+      border-radius:  4px;
+      border:1px  solid #ddd  ;
+
+      padding :15px ; /* 15 for internal spacing */
+
+      margin-bottom:  20px ; /* 20 for external  spacing */
+      
+    }
+    table  {
+      width: 100%;
+      border-collapse: collapse;
+
+      border: 1px solid #ddd ; 
+    }
+    th, td {
+       border: 1px  solid #ddd  ;
+
+      padding: 8px  ;
+    }
+
+    th {
+
+         background-color: #f1f1f1  ;
+
+      text-align :  left;
+    }
+   
+    footer  {
+      text-align: center ;
+
+       padding:  20px ;/*  20 pixele padding  around the content*/
+       margin-top : 20px ; 
+       /*  make it 20 pixels above the footer  element could change later */
+
+      background:  #f1f1f1 ;
+
+    }
+
+
+  </style>
+</head>
+<body>
+  <!-- Header for the app -->
+  <header>
+    <h1>CMT - Collaboration Management Tool</h1>
+  </header>
+
+  <!-- Navigaton links  -->
+
+  <nav class=" nav_bar ">
+
+    <a href="/projects"> Projects </a> 
+
+     <a href="/create_project"> New Project </a>
+
+      <a href="/files"> Files   </a>
+
+     <a href="/login"> Login  </a>
+
+    <a href="/signup"> SignUp  </a> 
+
+  </nav>
+
+  <!-- Main area -->
+
+  <div   class=" main_container ">
+
+    {% block content %}
+
+    
+    <p>Welcome to CMT!</p>
+    {% endblock %}
+    
+  </div>
+
+
+</body>
+</html>
