@@ -1,54 +1,51 @@
 # CMT - Collaboration Management Tool
 
-CMT is a simple collaboration management tool that allows users to create projects, manage tasks, and share files. It is built using Flask and SQLAlchemy, with a focus on simplicity and ease of use for beginners.
+CMT is a simple collaboration management tool that allows users to create projects, manage tasks, and share files. It is built using Flask and SQLAlchemy.
 
 ## Recent Updates
 
 The project has been significantly simplified to make it more beginner-friendly:
 
-- **Simplified Templates**: All HTML templates have been simplified to use basic HTML elements without complex frameworks.
-- **Minimal CSS**: Replaced Bootstrap with simple, inline CSS for basic styling.
-- **Basic JavaScript**: Reduced JavaScript to only essential functionality.
-- **Removed Complexity**: Eliminated milestone functionality and simplified the project structure.
-- **Beginner-Friendly Forms**: Replaced complex modals with simple, easy-to-understand forms.
-
+- **Simplified Templates** : we have make all html templates to be simple and easy to understand.
+**Minimal CSS**: we have remove bootstrap  with simple inline css for basic style.
+- **Basic JavaScript** : make javascript for only important functionality.
 ## Features
 
 ### Project Management
-- Create projects with name, description, start date, and expected end date
-- View all projects in a centralized list
-- Delete projects when they're no longer needed
-- Track project status
+- Create projects with name, description, start date, and expected end date .
+- View all projects in a central list .
+- Delete projects .
+- Track project status.
 
 ### Task Management
-- Create tasks with title, description, importance, and status
-- Assign tasks to users
-- Track task progress and deadlines
-- Set estimated duration and actual start/end times
+- Create tasks with title, description, importance, and status.
+- Assign tasks to team member.
+- Track task progress and deadlines .
+- Set estimated duration and actual start/end times .
 
 ### File Management
-- Upload files to the system
-- Associate files with specific projects
-- Download files for offline use
-- Delete files when they're no longer needed
-- Automatic file versioning
+- Upload files to the system .
+- link uploaded files with specific projects .
+- Download files for offline use .
+- Delete files .
+- Automatic file versioning .
 
 ### Reporting
-- Generate performance reports in PDF or CSV format
-- Include completed tasks, missed deadlines, and individual contributions
+- Generate performance reports in PDF or CSV format .
+- Include completed tasks, missed deadlines, and individual contributions .
 
 ## Technology Stack
 
-- **Backend**: Python with Flask framework
-- **Frontend**: Simple HTML, CSS, and minimal JavaScript
-- **Database**: SQLite with SQLAlchemy ORM
-- **File Storage**: Local file system
+- **Backend**: Python with Flask framework .
+- **Frontend**: Simple HTML, CSS, and minimal JavaScript .
+- **Database**: SQLite with SQLAlchemy ORM .
+- **File Storage**: Local file system .
 
 ## Installation
 
 ### Prerequisites
-- Python 3.9 or higher
-- pip or pipenv (for package management)
+- Python 3.9 or higher .
+- pipenv (for package management) .
 
 ### Setup Instructions
 
@@ -76,36 +73,14 @@ The project has been significantly simplified to make it more beginner-friendly:
 5. Run the application:
    ```
    python run.py
-   ```
+   ``` 
 
-6. Open your web browser and navigate to:
+6. Open your web browser and go to:
    ```
    http://127.0.0.1:5000
    ```
 
-## Usage Guide
 
-### Creating a New Project
-1. Navigate to the "Projects" page and click "Create New Project"
-2. Fill in the project details (name, description, start date, etc.)
-3. Click "Create Project" to save the new project
-
-### Managing Tasks
-1. Go to a project's detail page and click "View Tasks"
-2. Use the "Create New Task" button to add tasks
-3. Edit or delete tasks using the action buttons
-4. Track task status and progress
-
-### Managing Files
-1. Go to the "Files" page from the navigation bar
-2. Use the "Upload File" button to add new files
-3. Associate files with projects during upload
-4. Use the action buttons to download or delete files
-
-### Project Details
-1. Click on a project name from the Projects list to view its details
-2. See all files associated with the project
-3. Upload files directly from the project page
 
 ## Project Structure
 
