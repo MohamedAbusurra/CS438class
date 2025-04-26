@@ -2,7 +2,18 @@ from flask  import Flask,  render_template,  request,  redirect,  url_for, flash
 import os
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
-from models import db, init_db, User, Project, File, FileVersion, Task, Report
+from models import db , intit_db
+from models.UserManagement import User
+from models.ProjectManagement import Project
+from models.TaskManagement import Task
+from models.DocumentFileManagement import File
+from models.DocumentFileManagement import FileVersion
+from models.AnalysisandReporting import Report
+
+
+
+
+
 
 
 class CMTApp:

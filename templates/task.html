@@ -1,1 +1,214 @@
-            <table>
+{% extends 'base.html ' %} <!--inhertnce from base html-->
+
+{% block title %}Task Management - CMT {% endblock %}
+
+{% block content %}
+  <!-- Page header stuff -->
+  <h1> Task Management </h1>
+  <p> Project: {{ project.project_name }} </p>
+
+  <!-- Navigation links, probably should style these better -->
+  <div style="margin-bottom: 20px;">
+
+    <a href="/project/{{ project.id }}"
+        class="btn btn-secondary">
+        Back to Project
+    </a>
+
+    <a href="#" 
+    onclick="showCreateForm();" 
+    class="btn">
+    Create New Task
+</a> <!-- Added a function for no real reason -->
+  </div>
+
+  <!-- tasks list card -->
+  <div class="card">
+
+    <h2>Tasks List </h2> <!-- TODO: maybe add some icons here later? -->
+
+    {% if tasks %}
+      <table>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Importance</th>
+          <th>Status</th>
+          <th>Due Date</th>
+          <th>Actions</th>
+        </tr>
+        {% for task in tasks %}
+          <tr>
+            <td>{{ task.title }}</td>
+
+            <td>{{ task.description }}</td>
+
+            <td>{{ task.importance }}</td>
+
+            <td>{{ task.status }}</td>
+
+            <td>{{ task.due_date }}</td>
+
+            <td>
+              <a href="#" 
+                 onclick="document.getElementById('edit_task_form_{{ task.id }}').style.display='block'; return false;" class="btn">Edit</a>
+              <!-- delete button, added confirm dialog for safety -->
+
+
+              <a href="/task/{{ task.id }}/delete"
+                  class="btn btn-secondary" 
+                    onclick="return confirm('Sure you wanna delete this task?')">
+                    Delete  </a>
+            </td>
+          </tr>
+
+          <!-- edit form for task, hidden by default -->
+          <div id="edit_task_form_{{ task.id }}"
+               style="display:none;
+               border:1px solid #ddd;
+
+               padding:20px;margin:20px 0;">
+
+            <h3>Edit Task: {{ task.title }}</h3> <!-- This is the edit form header -->
+
+            <form method="POST" action="/task/{{ task.id }}/edit">
+
+              <p>
+                <label for="taskTitle_{{ task.id }}">Task Title:</label><br>
+                <input type="text" id="taskTitle_{{ task.id }}" name="task_title" value="{{ task.title }}" required>
+              </p>
+
+              <p>
+                <label for="task_desc_{{ task.id }}">Description:</label><br>
+
+                <textarea id="task_desc_{{ task.id }}" 
+                      name="task_description" 
+                          rows="3">{{ task.description }}</textarea>
+              </p>
+
+              <!-- Importance dropdown -->
+              <p>
+                <label   for="importance_{{ task.id }}">  Importance:</label><br>
+                <select id="importance_{{ task.id }}" 
+                     name="task_importance" required>
+
+
+                  <option   value="high" {% if task.importance == 'high' %}selected{% endif %}>
+                    High</option>
+                  <option  value="normal" {% if task.importance == 'normal' %}selected{% endif %}>
+                    Normal</option>
+                </select>
+              </p>
+
+              <p>
+                <label for="taskStatus_{{ task.id }}">Status:</label><br>
+                
+                <select id="taskStatus_{{ task.id }}" 
+                name="task_status" required>
+                  <option value="not begun" {% if task.status == 'not begun' %}selected{% endif %}>
+                    Not Started</option>
+                  <option value="in progress" {% if task.status == 'in progress' %}selected{% endif %}>
+                    In Progress</option>
+                  <option value="finished" {% if task.status == 'finished' %}selected{% endif %}>
+                    Completed</option>
+                </select>
+              </p>
+
+              <p>
+                <label for="dueDate_{{ task.id }}">Due Date:</label><br>
+
+                <input type="date" id="dueDate_{{ task.id }}"
+                    name="task_due_date" 
+                     value="{{ task.due_date }}">
+              </p>
+
+              <p>
+                <button type="submit" class="btn">
+                    Save Changes</button>
+                <button type="button" 
+                  onclick="document.getElementById('edit_task_form_{{ task.id }}').style.display='none';" class="btn btn-secondary">Cancel</button>
+              </p>
+            </form>
+          </div>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p>No tasks yet! Hit the "Create New Task" button to start adding tasks.</p> <!-- Friendly message -->
+    {% endif %}
+  </div>
+
+  <!-- Create task form, hidden by default -->
+  <div id="createTaskForm" style="display: none;
+   border: 1px solid #ddd; padding: 20px; 
+   margin-top: 20px;">
+    <h3>Create a New Task</h3> <!-- Slightly different wording for no reason -->
+    <form method="post" 
+          action="/project/{{ project.id }}/create_task">
+      <!-- Task title input -->
+      <p>
+        <label for="task_title">Task Title:</label><br>
+        <input type="text" 
+             id="task_title"
+             
+             name="task_title" required>
+      </p>
+
+      <p>
+        <label for="taskDescription">
+            Description:</label><br> <!-- Mixed naming convention -->
+        <textarea id="taskDescription"
+         name="task_description" 
+           rows="3"></textarea>
+      </p>
+
+      <p>
+        <label for="task_importance">
+            Importance:</label><br>
+        <select id="task_importance" 
+        name="task_importance" required>
+          <option value="high">
+            High</option>
+          <option value="normal" selected>
+            Normal</option>
+        </select>
+      </p>
+
+      <!-- Status dropdown, copied from edit form -->
+      <p>
+        <label for="task_status">Status:</label><br>
+        <select id="task_status" 
+        name="task_status" required>
+          <option value="not begun" selected>
+            Not Started</option>
+          <option value="in progress">
+            In Progress</option>
+          <option value="finished">
+            Completed</option>
+        </select>
+      </p>
+
+      <p>
+        <label for="task_due_date">
+            Due Date:</label><br>
+        <input type="date" 
+        id="task_due_date" 
+        name="task_due_date">
+      </p>
+
+      <p>
+        <button type="submit" 
+        class="btn">Create Task</button>
+
+        <button type="button"
+         onclick="document.getElementById('createTaskForm').style.display='none';" class="btn btn-secondary">Cancel</button>
+      </p>
+    </form>
+  </div>
+
+  <!-- Quick script for showing create form, probably could be cleaner -->
+  <script>
+    function showCreateForm() {
+      document.getElementById('createTaskForm').style.display = 'block'; // Shows the form
+    }
+  </script>
+{% endblock %}
