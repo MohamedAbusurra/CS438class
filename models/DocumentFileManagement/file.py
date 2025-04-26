@@ -136,7 +136,7 @@ class File(db.Model):
         except Exception as e:
             raise ValueError(f'the error is : {e}')
     
-    def toDict(self) -> dict:
+    def to_dict(self) -> dict:
         """
         her we convert file object to dictionary
         return: dict

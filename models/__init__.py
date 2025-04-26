@@ -1,10 +1,10 @@
 from models.database import db, init_db
-from models.user import User
-from models.project import Project as projectModel
-from models.file import File
-from models.file_version import FileVersion as file_version
-from models.task import Task
-from models.report import Report
+from models.UserManagement.user import User
+from models.ProjectManagement.project import Project as projectModel
+from models.DocumentFileManagement.file import File
+from models.DocumentFileManagement.file_version import FileVersion as file_version
+from models.TaskManagement.task import Task
+from models.AnalysisandReporting.report import Report
 """
 so this the main init file for all model
 """

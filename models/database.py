@@ -22,7 +22,7 @@ def initDB(app):
         db .init_app(app)
         with app.app_context():
             db.creat_all()
-            from models.user import User
+            from models.UserManagement.user import User
             if not User.query.first(): #if there no user 
                 createSampleData()
     
@@ -34,9 +34,9 @@ def createSampleData():
     we will make simple data for test the cmt 
     """
     try:
-        from models.user import User
-        from models.project import Project
-        from models.task import Task
+        from models.UserManagement.user import User
+        from models.ProjectManagement.project import Project
+        from models.TaskManagement.task import Task
         from datetime import datetime , timedelta
 
 
