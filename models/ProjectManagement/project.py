@@ -1,6 +1,11 @@
 from datetime import datetime , timezone 
 from typing import Optional
 from models.database import db
+from models.DocumentFileManagement import File
+from models.TaskManagement import Task
+from models.AnalysisandReporting import report
+
+
 
 
 class project(db.model):
@@ -69,3 +74,41 @@ class project(db.model):
             'status': self.status,
 
         }
+
+    #TODO like move import inside method Imm I do not it good
+
+    @classmethod
+
+    def create_project(cls,
+                       project_name,
+                       description,
+                       start_date,
+                       excepted_end_date =None,
+                       status="active",
+                       created_by_id = None
+        
+
+    ):
+        """
+        her create new project
+        return :
+        the created project object
+        
+        """
+        new_project = cls(
+            project_name = project_name ,
+
+            description = description  ,
+            start_date  =start_date,
+            expected_end_date  = expected_end_date ,
+            status=status,
+            created_by_id= created_by_id
+        )
+        db.session.add(new_project)
+        db.session.commit()
+
+
+        return new_project
+    
+    
+
