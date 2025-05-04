@@ -109,6 +109,33 @@ class project(db.model):
 
 
         return new_project
+
+
+    def delete( self) :
+        """
+        delete project
+        return may true if like it work i think
+        
+        """
+        try:
+            
+            files = File.query.filter_by(project_id = self.id ). all()
+            for file in files :
+                file.project_id = None 
+
+            
+            db.session.delete( self)
+
+            db.session. commit()
+
+            return True
+        except  Exception   as e :
+            db.session.rollback()
+            raise e
+        
+
+
+
     
     
 
