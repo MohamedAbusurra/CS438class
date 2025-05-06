@@ -133,7 +133,46 @@ class project(db.model):
             db.session.rollback()
             raise e
         
+    @classmethod
 
+    def get_all_projecta(cls ):
+        """
+        her we make this method to get all projects
+        and we Returns:
+        list of project objects
+
+        """
+        try:
+            #oh just we fetch all project 
+            projectList =  cls.query.all() 
+
+            print("fetched project : " , projectList)
+            return projectList
+        except Exception as e  :
+            print( "her may  get___ all __project just faild not work like good ", e)
+            return [] #fallback empty list
+        
+
+
+    def get_files(self ) :
+        """
+        get all files for this project 
+        and return list of files objects
+
+        """
+
+        try:
+            from models.DocumentFileManagement import File
+
+            fileList = File.query.filter_by( project_id = self.id).all()
+
+            allFiles =  fileList
+
+            return allFiles
+        except Exception as err:
+            print("get_files() error ", err)
+            return []
+        
 
 
     
