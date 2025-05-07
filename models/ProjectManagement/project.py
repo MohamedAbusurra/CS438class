@@ -174,6 +174,59 @@ class project(db.model):
             return []
         
 
+    def get_tasks( self) :
+        """
+        get all tasks that are link to this project
+        return list[task] like list of task objects
+        
+        """ 
+        try:
+
+            from models.TaskManagement import Task
+            projectID = self.id
+
+            tempTaskList = Task.query.filter_by( 
+                project_id = projectID
+            ).all()
+
+            """
+            print(f'found {len(tempTaskList)} tasks in project{ projectID}')
+            """
+
+            return tempTaskList 
+        except Exception as e :
+            #raise e
+            return []
+        
+    
+    def get_reports(self ) :
+        """
+        get all report 
+        """
+
+        try:
+
+            from models.AnalysisandReporting import report
+
+            currentProjectID = self.id
+
+
+            report_query = report.query.filter_by(
+
+                project_id = currentProjectID
+
+            ).order_by(report.created_at.desc())
+
+            reportList = report_query.all() #convert to list make it better
+            
+            return reportList
+        except:
+            return []
+        
+
+
+
+
 
     
     
