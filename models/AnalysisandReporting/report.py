@@ -79,64 +79,68 @@ class Report(db.Model):
                                  
 
                                  backref=' reports_created',
-                                   foreign_keys= [created_by_id])
+
+                                 foreign_keys= [created_by_id])
+    
 
     def __init__( self , 
-
-
                  project_id: int,
 
-
-                  report_type: str = TYPE_PERFORMANCE,
-
+                 reportType: str = TYPE_PERFORMANCE,
 
                  created_by_id:  Optional[int] = None ,
 
-                   filters:  Optional[Dict[ str,   Any]] = None):
+                 filters:  Optional[Dict[ str,   Any]] = None):
         
         """
         initialize a    Report object.
 
         
         """
-        self.project_id =    project_id
+        try: 
+            self.project_id =    project_id
+            self.reportType = reportType
+            self.created_by_id = created_by_id
 
-        # validate    report type
 
-        if report_type not in self.TYPE_OPTIONS:
+            # validate    report type
+
+            if reportType not in self.TYPE_OPTIONS:
+
             
-            raise ValueError(f"Invalid report type. Must be one of: {', '.join(self.TYPE_OPTIONS)}")
-        self. report_type = report_type
+                 raise ValueError(f"Invalid report type. Must be one of: {', '.join(self.TYPE_OPTIONS)}")
 
 
-        self.created_by_id = created_by_id
+        
 
-        self.status = self.STATUS_PENDING
+            self.status = self.STATUS_PENDING
 
-        self.progress = 0
+            self.progress = 0
 
-        # set filters
+            # set filters
 
-        if filters:
-
-            self.filters = filters
-
-        else:
-            # default filters - include all sections
+            if filters:
 
 
+                self.filters = filters
 
-            self.filters = {
+            else:
+            # default filter - include all the  sections
+
+
+
+                self.filters = {
 
                 "include_completed_tasks": True,
-
-                "include_missed_deadlines": True,
-
+                "includeMissedDeadlines": True,
                 "include_contributions": True,
-
-
                 "format": "pdf"  # default format
             }
+        except Exception as e :
+            print(f'report init faild {str(e)}')
+            raise
+
+            
 
     @property
 
@@ -145,13 +149,22 @@ class Report(db.Model):
 
 
         """
-        get the filters as a dictionary.
+        get the filters as a dictionary from JSON string.
         """
-        if self._filters:
+        try:
+            if not self._filters:
+                return {}
+            
+            if isinstance(self._filters , dict) :
+                return self._filters
+            
+            parsed = json.loads(self._filters)
 
-
-            return json.loads(self._filters)
-        return {}
+            return parsed
+        except json.JSONDecodeError :
+            print("Broken filter json ")
+            
+            return {}
     
 
     @filters.setter
@@ -285,8 +298,9 @@ class Report(db.Model):
         returns:
              list of report objects
         """
+        reportList = cls. query.filter_by( project_id =project_id ). order_by(cls. created_at.desc()) .all()
 
-        return cls. query.filter_by( project_id =project_id ). order_by(cls. created_at.desc()) .all()
+        return reportList
 
     def get_status(self ):
         """
