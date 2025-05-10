@@ -1,0 +1,199 @@
+{% extends 'base.html' %} <!-- this are inherit from the base.html-->
+
+{% block title %} Change User Role {% endblock %}
+
+
+
+{% block content %}
+
+<h1>Change User Role</h1> <!--this is the change user role page-->
+
+{% if current_user.can_assign_roles() %}
+
+
+  <div class="role-change-container">
+
+    <div class="user-info">
+
+
+      <h2>User Information</h2>
+
+      <p><strong>Username:</strong> {{ user.username }}</p>
+      <p><strong>Full Name:</strong> {{ user.get_full_name() }}</p>
+
+
+
+      <p><strong>Email:</strong> {{ user.email }}</p>
+
+      <p><strong>Current Role:</strong> 
+
+        {% if user.role == 'administrator' %}
+          Administrator
+        {% elif user.role == 'academic_supervisor' %}
+          Academic Supervisor
+        {% elif user.role == 'project_manager' %}
+          Project Manager
+        {% else %}
+          Team Member
+        {% endif %}
+      </p>
+    </div>
+    
+    <div class="role-form">
+
+      <h2>Assign New Role</h2>
+      <form action="{{ url_for('update_user_role', user_id=user.id) }}"
+       method="POST">
+
+
+        <div class="form-group">
+
+          <label for="role">Select New Role:</label>
+          <select id="role" name="role" required>
+
+            <option   value="">-- Select Role --</option>
+            <option   value="team_member" {% if user.role == 'team_member' %}selected{% endif %}>Team Member</option>
+            <option value="project_manager" {% if user.role == 'project_manager' %}selected{% endif %}>Project Manager</option>
+            <option    value="academic_supervisor" {% if user.role == 'academic_supervisor' %}selected{% endif %}>Academic Supervisor</option>
+            <option  value="administrator" {% if user.role == 'administrator' %}selected{% endif %}>Administrator</option>
+          </select>
+        </div>
+        
+
+
+        <div class="form-actions">
+
+          <button
+           type="submit"
+            class="btn">
+            Update Role
+          </button>
+          <a href="{{ url_for('user_management') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+    
+    <div class="role-description">
+
+      <h3>Role Descriptions</h3>
+
+      <div class="role-card">
+
+        <h4>Administrator</h4>
+        <p>Full access to all system features</p>
+      </div>
+      
+      <div class="role-card">
+        <h4>Academic Supervisor</h4>
+
+        <p>can manage projects, tasks, and users</p>
+      </div>
+      
+      <div class="role-card">
+
+        <h4>Project Manager</h4>
+
+        <p>can manage projects and tasks..</p>
+      </div>
+      
+      <div class="role-card">
+        <h4>Team Member</h4>
+        <p>basic access to projects and tasks. .</p>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="access-denied">
+
+    <p>you do not have permission to change user roles</p>
+    <a href="{{ url_for('user_management') }}" class="btn">Back to User Management</a>
+  </div>
+{% endif %}
+
+<style>
+  .role-change-container {
+
+    margin-top: 20px;
+  }
+  
+  .user-info {
+    background-color: #f9f9f9;
+
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  
+  .role-form {
+    margin-bottom: 30px;
+
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+
+  }
+  
+  .form-group label {
+
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+  
+
+  .form-actions {
+    margin-top: 20px;
+  }
+  
+  .btn {
+    display:  inline-block;
+    padding: 8px 15px;
+
+    margin-right: 10px;
+    background-color: #4285f4;
+    color: white;
+
+    text-decoration:  none;
+    border: none;
+    border-radius:  3px;
+    cursor: pointer;
+  }
+  
+  .btn-secondary {
+    background-color: #6c757d;
+  }
+  
+  .role-description  {
+    margin-top: 30px;
+  }
+  
+  .role-card {
+    background-color:  #f9f9f9;
+    padding:  15px;
+    border-radius:    5px;
+    margin-bottom: 15px;
+  }
+  
+  .role-card h4 {
+    margin-top:  0;
+    color: #4285f4;
+  }
+  
+  .access-denied   {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 5px;
+    text-align:  center;
+  }
+</style>
+
+{% endblock %}

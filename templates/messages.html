@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Messages</title>
+
+
+</head>
+<body>
+    <h1>Messages</h1>
+
+
+    
+    <div>
+        <h2>Conversations</h2>
+
+
+        
+        <!--this  User list -->
+        <div>
+
+            <h3>Team Members</h3>
+            <ul>
+
+                {% for user in users %}
+                <li>
+                    <a href="{{ url_for('view_conversation', user_id=user.id) }}">
+                        {{ user.get_full_name() }}
+
+                        {% if unread_counts.get(user.id, 0) > 0 %}
+
+                        ({{ unread_counts.get(user.id) }} unread)
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    
+    <div>
+        {% if selected_user %}
+
+        <h2>Conversation with {{ selected_user.get_full_name() }}</h2>
+        
+        <!--this for  Messages list -->
+        <div>
+            {% if messages %}
+
+            {% for message in messages %}
+            <div>
+                <p>
+
+                    <strong>{{ message.sender_user.get_full_name() }}</strong>
+                    <small>{{ message.timestamp }}</small>
+                </p>
+                <p>{{ message.content }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+
+
+            <p>No messages yet. Start a conversation!</p>
+            {% endif %}
+        </div>
+        
+        <!-- Message compose form -->
+
+
+        <form action="{{ url_for('send_message') }}" method="post">
+            <input type="hidden" name="receiver_id" value="{{ selected_user.id }}">
+            
+            <div>
+                <label for="content">Message:</label>
+                <textarea id="content"
+                 name="content" 
+                 required></textarea>
+
+            </div>
+            
+            <div>
+                <button 
+
+                type="submit"> Send Message
+
+                </button>
+            </div>
+        </form>
+
+        {% else %}
+        <p>select a team member to start the conversation </p>
+        
+        {% endif %}
+    </div>
+</body>
+</html>
