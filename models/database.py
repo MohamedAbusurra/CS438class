@@ -1,6 +1,7 @@
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
-from flask_aqlalchemy import SQLAlchemy
-import os # we nee it to save the file to upload dir
+import os  # for directory creation
+import traceback  # for better error tracking
 """
 set up our database conncetion
 """ 
