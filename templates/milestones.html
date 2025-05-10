@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+
+{% block title %}Project Milestones{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Milestones for {{ project.project_name }}</h1>
+            <p class="text-muted">{{ project.description }}</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('project_details', project_id=project.id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Project
+            </a>
+            <a href="{{ url_for('view_progress', project_id=project.id) }}" class="btn btn-primary">
+                <i class="fas fa-chart-line"></i> View Progress Dashboard
+            </a>
+        </div>
+    </div>
+
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Create New Milestone</h5>
+        </div>
+        <div class="card-body">
+            <form action="{{ url_for('create_milestone', project_id=project.id) }}" method="POST">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="milestone_title">Title</label>
+                            <input type="text" class="form-control" id="milestone_title" name="milestone_title" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="milestone_due_date">Due Date</label>
+                            <input type="date" class="form-control" id="milestone_due_date" name="milestone_due_date" required>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="milestone_description">Description</label>
+                            <input type="text" class="form-control" id="milestone_description" name="milestone_description">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Create Milestone</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Project Milestones</h5>
+        </div>
+        <div class="card-body">
+            {% if milestones %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Completion</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for milestone in milestones %}
+                                <tr>
+                                    <td>{{ milestone.title }}</td>
+                                    <td>{{ milestone.description }}</td>
+                                    <td>{{ milestone.due_date }}</td>
+                                    <td>
+                                        {% if milestone.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif milestone.status == 'in_progress' %}
+                                            <span class="badge bg-primary">In Progress</span>
+                                        {% elif milestone.status == 'delayed' %}
+                                            <span class="badge bg-danger">Delayed</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Not Started</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="progress">
+                                            <div class="progress-bar 
+                                                {% if milestone.status == 'completed' %}bg-success
+                                                {% elif milestone.status == 'delayed' %}bg-danger
+                                                {% else %}bg-primary{% endif %}" 
+                                                role="progressbar" 
+                                                style="width: {{ milestone.completion_percentage }}%;" 
+                                                aria-valuenow="{{ milestone.completion_percentage }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                                {{ milestone.completion_percentage|round|int }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editMilestone{{ milestone.id }}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <a href="{{ url_for('delete_milestone', milestone_id=milestone.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this milestone?');">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                
+                                <div class="modal fade" id="editMilestone{{ milestone.id }}" tabindex="-1" aria-labelledby="editMilestoneLabel{{ milestone.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editMilestoneLabel{{ milestone.id }}">Edit Milestone</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ url_for('edit_milestone', milestone_id=milestone.id) }}" method="POST">
+                                                    <div class="form-group mb-3">
+                                                        <label for="milestone_title{{ milestone.id }}">Title</label>
+                                                        <input type="text" class="form-control" id="milestone_title{{ milestone.id }}" name="milestone_title" value="{{ milestone.title }}" required>
+                                                    </div>
+                                                    <div class="form-group mb-3">
+                                                        <label for="milestone_description{{ milestone.id }}">Description</label>
+                                                        <textarea class="form-control" id="milestone_description{{ milestone.id }}" name="milestone_description" rows="3">{{ milestone.description }}</textarea>
+                                                    </div>
+                                                    <div class="form-group mb-3">
+                                                        <label for="milestone_due_date{{ milestone.id }}">Due Date</label>
+                                                        <input type="date" class="form-control" id="milestone_due_date{{ milestone.id }}" name="milestone_due_date" value="{{ milestone.due_date }}" required>
+                                                    </div>
+                                                    <div class="form-group mb-3">
+                                                        <label for="milestone_status{{ milestone.id }}">Status</label>
+                                                        <select class="form-control" id="milestone_status{{ milestone.id }}" name="milestone_status">
+                                                            <option value="not_started" {% if milestone.status == 'not_started' %}selected{% endif %}>Not Started</option>
+                                                            <option value="in_progress" {% if milestone.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                                            <option value="completed" {% if milestone.status == 'completed' %}selected{% endif %}>Completed</option>
+                                                            <option value="delayed" {% if milestone.status == 'delayed' %}selected{% endif %}>Delayed</option>
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No milestones have been created for this project yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+   
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Assign Tasks to Milestones</h5>
+        </div>
+        <div class="card-body">
+            {% if tasks %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Milestone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                                <tr>
+                                    <td>{{ task.title }}</td>
+                                    <td>
+                                        {% if task.status == 'finished' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif task.status == 'in progress' %}
+                                            <span class="badge bg-primary">In Progress</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Not Started</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ task.due_date }}</td>
+                                    <td>
+                                        {% for milestone in milestones %}
+                                            {% if milestone.id == task.milestone_id %}
+                                                {{ milestone.title }}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if not task.milestone_id %}
+                                            <span class="text-muted">None</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#assignTask{{ task.id }}">
+                                            <i class="fas fa-link"></i> Assign
+                                        </button>
+                                    </td>
+                                </tr>
+
+                               
+                                <div class="modal fade" id="assignTask{{ task.id }}" tabindex="-1" aria-labelledby="assignTaskLabel{{ task.id }}" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="assignTaskLabel{{ task.id }}">Assign Task to Milestone</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{{ url_for('edit_task', task_id=task.id) }}" method="POST">
+                                                    <input type="hidden" name="task_title" value="{{ task.title }}">
+                                                    <input type="hidden" name="task_description" value="{{ task.description }}">
+                                                    <input type="hidden" name="task_importance" value="{{ task.importance }}">
+                                                    <input type="hidden" name="task_status" value="{{ task.status }}">
+                                                    <input type="hidden" name="task_due_date" value="{{ task.due_date }}">
+                                                    <input type="hidden" name="task_assigned_to_id" value="{{ task.assigned_to_id }}">
+                                                    <input type="hidden" name="task_estimated_duration" value="{{ task.estimated_duration }}">
+                                                    <input type="hidden" name="task_start_date" value="{{ task.start_date }}">
+                                                    
+                                                    <div class="form-group mb-3">
+                                                        <label for="task_milestone_id{{ task.id }}">Milestone</label>
+                                                        <select class="form-control" id="task_milestone_id{{ task.id }}" name="task_milestone_id">
+                                                            <option value="">None</option>
+                                                            {% for milestone in milestones %}
+                                                                <option value="{{ milestone.id }}" {% if milestone.id == task.milestone_id %}selected{% endif %}>{{ milestone.title }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Save Assignment</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No tasks have been created for this project yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

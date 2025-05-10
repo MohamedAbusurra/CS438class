@@ -1,0 +1,164 @@
+{% extends 'base.html' %} 
+
+{% block title %} Login {% endblock %}
+
+{% block content %}
+
+<h1>Login</h1> 
+
+<div class="login-container">
+  <form action="{{ url_for('login') }}" method="POST" class="login-form">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+
+    <div class="form-group remember-me">
+      <input type="checkbox" id="remember_me" name="remember_me">
+      <label for="remember_me">Remember me</label>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">Login</button>
+      <a href="{{ url_for('register') }}" class="btn btn-secondary">Create an account</a>
+    </div>
+
+    <div class="forgot-password">
+      <a href="{{ url_for('forgot_password') }}">Forgot your password?</a>
+    </div>
+
+    <div class="social-login">
+      <div class="divider">
+        <span>OR</span>
+      </div>
+      <a href="#" class="btn btn-google">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" width="20">
+        Sign in with Google
+      </a>
+      <small>Note: Google sign-in is currently in development.</small>
+    </div>
+  </form>
+</div>
+
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 30px auto;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input[type="text"], .form-group input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+
+  .remember-me {
+    display: flex;
+    align-items: center;
+  }
+
+  .remember-me input {
+    margin-right: 10px;
+  }
+
+  .remember-me label {
+    margin-bottom: 0;
+    font-weight: normal;
+  }
+
+  .form-actions {
+    margin-top: 20px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-right: 10px;
+    background-color: #4285f4;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+  }
+
+  .forgot-password {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .forgot-password a {
+    color: #4285f4;
+    text-decoration: none;
+  }
+
+  .forgot-password a:hover {
+    text-decoration: underline;
+  }
+
+  /* Social login styles */
+  .social-login {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .divider span {
+    padding: 0 10px;
+    color: #6c757d;
+    font-size: 0.9em;
+  }
+
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #444;
+    border: 1px solid #ddd;
+    margin: 10px auto;
+    width: 80%;
+  }
+
+  .btn-google img {
+    margin-right: 10px;
+  }
+</style>
+
+{% endblock %}

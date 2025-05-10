@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% block title %}Project Progress Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Progress Dashboard: {{ project.project_name }}</h1>
+            <p class="text-muted">{{ project.description }}</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('project_details', project_id=project.id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Project
+            </a>
+            <a href="{{ url_for('view_milestones', project_id=project.id) }}" class="btn btn-primary">
+                <i class="fas fa-flag"></i> Manage Milestones
+            </a>
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Project Overview</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Project Status: 
+                        <span class="badge 
+                            {% if project.status == 'completed' %}bg-success
+                            {% elif project.status == 'active' %}bg-primary
+                            {% elif project.status == 'on hold' %}bg-warning
+                            {% elif project.status == 'cancelled' %}bg-danger
+                            {% else %}bg-secondary{% endif %}">
+                            {{ project.status|capitalize }}
+                        </span>
+                    </h6>
+                    <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+                    <p><strong>Expected End Date:</strong> {{ project.expected_end_date or 'Not set' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Overall Completion</h6>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar 
+                            {% if project_completion == 100 %}bg-success
+                            {% elif project_completion > 60 %}bg-primary
+                            {% elif project_completion > 30 %}bg-info
+                            {% else %}bg-warning{% endif %}" 
+                            role="progressbar" 
+                            style="width: {{ project_completion }}%;" 
+                            aria-valuenow="{{ project_completion }}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                            {{ project_completion|round|int }}%
+                        </div>
+                    </div>
+                    <p class="mt-2"><strong>Tasks:</strong> {{ tasks|length }} total, {{ tasks|selectattr('status', 'equalto', 'finished')|list|length }} completed</p>
+                    <p><strong>Milestones:</strong> {{ milestones|length }} total, {{ milestones|selectattr('status', 'equalto', 'completed')|list|length }} completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Current Active Milestone</h5>
+        </div>
+        <div class="card-body">
+            {% if active_milestone %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>{{ active_milestone.title }}</h4>
+                        <p>{{ active_milestone.description }}</p>
+                        <p><strong>Due Date:</strong> {{ active_milestone.due_date }}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge 
+                                {% if active_milestone.status == 'completed' %}bg-success
+                                {% elif active_milestone.status == 'in_progress' %}bg-primary
+                                {% elif active_milestone.status == 'delayed' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ active_milestone.status|replace('_', ' ')|capitalize }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Milestone Completion</h6>
+                        <div class="progress" style="height: 25px;">
+                            <div class="progress-bar 
+                                {% if active_milestone.status == 'completed' %}bg-success
+                                {% elif active_milestone.status == 'delayed' %}bg-danger
+                                {% else %}bg-primary{% endif %}" 
+                                role="progressbar" 
+                                style="width: {{ active_milestone.completion_percentage }}%;" 
+                                aria-valuenow="{{ active_milestone.completion_percentage }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                                {{ active_milestone.completion_percentage|round|int }}%
+                            </div>
+                        </div>
+                        
+                  
+                        <h6 class="mt-3">Tasks in this Milestone:</h6>
+                        <ul class="list-group">
+                            {% set milestone_tasks = tasks|selectattr('milestone_id', 'equalto', active_milestone.id)|list %}
+                            {% if milestone_tasks %}
+                                {% for task in milestone_tasks %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {{ task.title }}
+                                        <span class="badge 
+                                            {% if task.status == 'finished' %}bg-success
+                                            {% elif task.status == 'in progress' %}bg-primary
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ task.status|capitalize }}
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                                <li class="list-group-item">No tasks assigned to this milestone</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No active milestone. All milestones are completed or no milestones have been created.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Milestone Timeline</h5>
+        </div>
+        <div class="card-body">
+            {% if milestones %}
+                <div class="timeline">
+                    {% for milestone in milestones %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker 
+                                {% if milestone.status == 'completed' %}bg-success
+                                {% elif milestone.status == 'in_progress' %}bg-primary
+                                {% elif milestone.status == 'delayed' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                            </div>
+                            <div class="timeline-content">
+                                <h4 class="timeline-title">{{ milestone.title }}</h4>
+                                <p>{{ milestone.description }}</p>
+                                <p><strong>Due Date:</strong> {{ milestone.due_date }}</p>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar 
+                                        {% if milestone.status == 'completed' %}bg-success
+                                        {% elif milestone.status == 'delayed' %}bg-danger
+                                        {% else %}bg-primary{% endif %}" 
+                                        role="progressbar" 
+                                        style="width: {{ milestone.completion_percentage }}%;" 
+                                        aria-valuenow="{{ milestone.completion_percentage }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                        {{ milestone.completion_percentage|round|int }}%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    No milestones have been created for this project yet.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Task Status Summary</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Task Status Distribution</h6>
+                    <div class="task-status-chart">
+                        
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="card bg-secondary text-white">
+                                    <div class="card-body">
+                                        <h5>{{ tasks|selectattr('status', 'equalto', 'not begun')|list|length }}</h5>
+                                        <p class="mb-0">Not Started</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5>{{ tasks|selectattr('status', 'equalto', 'in progress')|list|length }}</h5>
+                                        <p class="mb-0">In Progress</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5>{{ tasks|selectattr('status', 'equalto', 'finished')|list|length }}</h5>
+                                        <p class="mb-0">Completed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6>Recent Task Updates</h6>
+                    <ul class="list-group">
+                        {% set recent_tasks = tasks|sort(attribute='created_at', reverse=true)|list %}
+                        {% for task in recent_tasks[:5] %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ task.title }}
+                                <span class="badge 
+                                    {% if task.status == 'finished' %}bg-success
+                                    {% elif task.status == 'in progress' %}bg-primary
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ task.status|capitalize }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -30px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.timeline-content {
+    padding-left: 10px;
+    border-left: 2px solid #dee2e6;
+    padding-bottom: 20px;
+}
+
+.timeline-title {
+    margin-top: 0;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Email Verified - CMT{% endblock %}
+
+{% block content %}
+<div class="verification-container">
+  <div class="verification-card">
+    <div class="verification-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+    </div>
+    <h1>Email Verified Successfully!</h1>
+    <p>Your email has been verified and your account is now active. You can now log in and access all features of the Collaboration Management Tool.</p>
+    <div class="verification-actions">
+      <a href="{{ url_for('login') }}" class="btn">Log In Now</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .verification-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 70vh;
+  }
+  
+  .verification-card {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    max-width: 500px;
+  }
+  
+  .verification-icon {
+    margin-bottom: 20px;
+  }
+  
+  .verification-card h1 {
+    color: #4CAF50;
+    margin-bottom: 20px;
+  }
+  
+  .verification-card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+  }
+  
+  .verification-actions {
+    margin-top: 20px;
+  }
+  
+  .btn {
+    display: inline-block;
+    background-color: #4285f4;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .btn:hover {
+    background-color: #3367d6;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'base.html' %} 
+
+{% block title %} Register {% endblock %}
+
+{% block content %}
+
+<h1>Create an Account</h1> <!--this is the registration page-->
+
+<div class="register-container">
+  <form action="{{ url_for('register') }}" method="POST" class="register-form">
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" title="Username can only contain letters, numbers, and underscores">
+      <small>Username must be 3-20 characters long and can only contain letters, numbers, and underscores.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+      <small>A verification email will be sent to this address.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required minlength="8" pattern="(?=.*\d)(?=.*[A-Z]).{8,}" title="Password must be at least 8 characters long, include at least one number and one uppercase letter">
+      <small>Password must be at least 8 characters long, include at least one number and one uppercase letter.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="confirm_password">Confirm Password:</label>
+      <input type="password" id="confirm_password" name="confirm_password" required minlength="8">
+      <small>Please enter your password again to confirm.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="first_name">First Name:</label>
+      <input type="text" id="first_name" name="first_name">
+    </div>
+
+    <div class="form-group">
+      <label for="last_name">Last Name:</label>
+      <input type="text" id="last_name" name="last_name">
+    </div>
+
+    {% if current_user and current_user.can_assign_roles() %}
+      <div class="form-group">
+        <label for="role">Role:</label>
+        <select id="role" name="role">
+          <option value="team_member">Team Member</option>
+          <option value="project_manager">Project Manager</option>
+          <option value="academic_supervisor">Academic Supervisor</option>
+          <option value="administrator">Administrator</option>
+        </select>
+      </div>
+    {% endif %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn" id="register-btn">Register</button>
+      <a href="{{ url_for('login') }}" class="btn btn-secondary">Already have an account? Login</a>
+    </div>
+
+    <div class="form-group">
+      <div id="password-error" class="error-message" style="display: none; color: red;"></div>
+    </div>
+
+    <div class="form-group social-login">
+      <div class="divider">
+        <span>OR</span>
+      </div>
+      <a href="#" class="btn btn-google">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo" width="20">
+        Sign up with Google
+      </a>
+      <small>Note: Google sign-up is currently in development.</small>
+    </div>
+  </form>
+
+  <div class="register-info">
+    <h3>Registration Information</h3>
+    <ul>
+      <li>After registration, a verification link will be sent to your email.</li>
+      <li>The verification link will expire after 24 hours.</li>
+      <li>You must verify your email to access all features of the system.</li>
+      <li>Your password must be at least 8 characters long and include at least one number and one uppercase letter.</li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  .register-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 20px;
+  }
+
+  .register-form {
+    flex: 1;
+    min-width: 300px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  .register-info {
+    flex: 1;
+    min-width: 300px;
+    background-color: #e9f5ff;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+  }
+
+  .form-group small {
+    display: block;
+    color: #6c757d;
+    margin-top: 5px;
+    font-size: 0.8em;
+  }
+
+  .form-actions {
+    margin-top: 20px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-right: 10px;
+    background-color: #4285f4;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+  }
+
+  .register-info ul {
+    padding-left: 20px;
+  }
+
+  .register-info li {
+    margin-bottom: 10px;
+  }
+
+  /* Social login styles */
+  .social-login {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+  }
+
+  .divider::before,
+  .divider::after {
+    content: "";
+    flex: 1;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .divider span {
+    padding: 0 10px;
+    color: #6c757d;
+    font-size: 0.9em;
+  }
+
+  .btn-google {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #444;
+    border: 1px solid #ddd;
+    margin: 10px auto;
+    width: 80%;
+  }
+
+  .btn-google img {
+    margin-right: 10px;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.register-form');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const passwordError = document.getElementById('password-error');
+
+  
+    function validatePassword() {
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      // checks if the password entered is the correct password
+      if (password !== confirmPassword) {
+        passwordError.textContent = 'Passwords do not match';
+        passwordError.style.display = 'block';
+        return false;
+      }
+
+      // verifies password requirements are met
+      const hasNumber = /\d/.test(password);
+      const hasUpperCase = /[A-Z]/.test(password);
+      const isLongEnough = password.length >= 8;
+
+      if (!hasNumber || !hasUpperCase || !isLongEnough) {
+        passwordError.textContent = 'Password must be at least 8 characters long, include at least one number and one uppercase letter';
+        passwordError.style.display = 'block';
+        return false;
+      }
+
+
+      passwordError.style.display = 'none';
+      return true;
+    }
+
+
+    passwordInput.addEventListener('input', validatePassword);
+    confirmPasswordInput.addEventListener('input', validatePassword);
+
+    // form validated during submission
+    form.addEventListener('submit', function(event) {
+      if (!validatePassword()) {
+        event.preventDefault();
+      }
+    });
+  });
+</script>
+
+{% endblock %}
