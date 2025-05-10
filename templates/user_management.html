@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Management</title>
+
+
+
+</head>
+<body>
+    <h1>User Management</h1>
+    
+    <div>
+        <h2>All Users</h2>
+        
+        <table border="1">
+            <tr>
+                <th>Username</th>
+                <th>Full Name</th>
+
+                <th>Email</th>
+                <th>Role</th>
+
+                <th>Verified</th>
+                <th>Actions</th>
+
+            </tr>
+            
+            {% for user in users %}
+            <tr>
+
+                <td>{{ user.username }}</td>
+
+                <td>{{ user.get_full_name() }}</td>
+
+                <td>{{ user.email }}</td>
+
+                <td>{{ user.role }}</td>
+                
+                <td>{{ 'Yes' if user.is_verified else 'No' }}</td>
+
+
+                <td>
+
+                    <a href="{{ url_for('edit_user', user_id=user.id) }}">Edit</a>
+                    <a href="{{ url_for('change_user_role', user_id=user.id) }}">Change Role</a>
+                    <a href="{{ url_for('delete_user', user_id=user.id) }}" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+
+            {% endfor %}
+        </table>
+    </div>
+    
+    <div>
+        <h2>Assign Roles</h2>
+
+
+        
+        <form action="{{ url_for('batch_assign_roles') }}" method="post">
+            <div>
+                <label for="role">Select Role:</label>
+
+                <select id="role" 
+                name="role" required>
+
+                    <option value="">-- Select Role --</option>
+
+                    <option value="team_member">Team Member</option>
+
+                    <option value="project_manager">Project Manager</option>
+
+                    <option value="academic_supervisor">Academic Supervisor</option>
+
+                    <option value="administrator">Administrator</option>
+                </select>
+            </div>
+            
+            <div>
+                <label>Select Users:</label>
+
+                <div>
+                    {% for user in users %}
+
+                    <div>
+                        <input type="checkbox" 
+                        id="user_{{ user.id }}" 
+                        name="selected_users" 
+                        value="{{ user.id }}">
+                        <label for="user_{{ user.id }}">{{ user.get_full_name() }} ({{ user.username }})</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div>
+                <button
+                 type="submit">Assign Role
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
