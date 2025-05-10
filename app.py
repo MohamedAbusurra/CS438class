@@ -1,15 +1,11 @@
-from flask  import Flask,  render_template,  request,  redirect,  url_for, flash,  send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
 import os
+import traceback
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
-from models import db , intit_db
-from models.UserManagement import User
-from models.ProjectManagement import Project
-from models.TaskManagement import Task
-from models.DocumentFileManagement import File
-from models.DocumentFileManagement import FileVersion
-from models.AnalysisandReporting import Report
-
+from models import db, init_db, User, AuthToken, Project, Milestone, File, FileVersion, Task, Report, Message
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from utils.email_utils import send_verification_email, send_password_reset_email
 
 
 
