@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Discussion Forum</title>
+</head>
+<body>
+    <h1>Discussion Forum</h1>
+
+    <div>
+        <h2>Project Discussions</h2>
+
+        <!--this  Search bar -->
+        <form action="{{ url_for('discussion.search_discussions') }}" method="get">
+            <input type="hidden" name="project_id" value="{{ project_id }}">
+            <label for="search">Search:</label>
+            <input type="text" id="search" name="keyword" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <!--this  New post form -->
+        <h3>Create a New Post</h3>
+        <form action="{{ url_for('discussion.create_post') }}" method="post">
+            <input type="hidden" name="project_id" value="{{ project_id }}">
+
+            <div>
+                <label for="title">Title:</label>
+                <input id="title" name="title" required>
+            </div>
+
+            <div>
+                <label for="content">Post:</label>
+                <textarea id="content" name="content" required></textarea>
+            </div>
+
+            <div>
+                <button type="submit">Submit Post</button>
+            </div>
+        </form>
+
+        <!--this  List of all posts -->
+        {% if posts %}
+        {% for post in posts %}
+        <div style="margin-top:20px; padding:10px; border:1px solid #ccc;">
+            <p>
+                <strong>{{ post.author.get_full_name() }}</strong>
+                <small>{{ post.postTime }}</small>
+            </p>
+            <p><strong>{{ post.title }}</strong></p>
+            <p>{{ post.content }}</p>
+
+            <!--this  Replies list -->
+            {% if post.replies %}
+            <div style="margin-left:20px;">
+                <h4>Replies</h4>
+                {% for reply in post.replies %}
+                <div style="margin-top:10px; padding:5px; border-top:1px dashed #aaa;">
+                    <p>
+                        <strong>{{ reply.author.get_full_name() }}</strong>
+                        <small>{{ reply.replyTime }}</small>
+                    </p>
+                    <p>{{ reply.content }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!--this  Reply form -->
+            <form action="{{ url_for('discussion.reply_post') }}" method="post">
+                <input type="hidden" name="post_id" value="{{ post.postID }}">
+                <input type="hidden" name="project_id" value="{{ project_id }}">
+
+                <div>
+                    <label for="reply_content_{{ post.postID }}">Reply:</label>
+                    <textarea id="reply_content_{{ post.postID }}" name="reply_content" required></textarea>
+                </div>
+
+                <div>
+                    <button type="submit">Submit Reply</button>
+                </div>
+            </form>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p>No posts yet. Start the discussion!</p>
+        {% endif %}
+    </div>
+</body>
+</html>
