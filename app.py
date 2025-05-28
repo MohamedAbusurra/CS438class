@@ -13,11 +13,18 @@ from utils.email_utils import send_verification_email, send_password_reset_email
 
 
 class CMTApp:
-    
     """
     main app class for the cmt system it have the core functionality
-    
-    """
+    implements Singleton pattern for app instance management and
+    uses Facade patterns for communication and notification management.    """
+
+    _instance = None
+
+    def __new__(cls):
+        """Implement Singleton pattern."""
+        if cls._instance is None:
+            cls._instance = super(CMTApp, cls).__new__(cls)
+        return cls._instance
 
     def __init__(self ):
 
