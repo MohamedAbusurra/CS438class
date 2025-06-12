@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 import traceback  # for better error tracking
 from models.database import db
+from models.Forum.forum_post import ForumPost
 
 
 
@@ -220,6 +221,25 @@ class project(db.model):
         except:
             return []
         
+
+    def get_forum_posts(self) -> List[ForumPost]:
+        """
+        Retrieves all forum posts associated with this project, ordered by post time (newest first).
+
+        Returns:
+            List[ForumPost]: A list of ForumPost objects. Returns an empty list on error.
+        """
+        try:
+            # Assuming ForumPost model has a 'projectID' field and a 'postTime' field
+            # and that 'postTime' should be used for ordering.
+            # If 'projectID' is actually 'project_id' in ForumPost, adjust accordingly.
+            # If 'postTime' is actually 'created_at' in ForumPost, adjust accordingly.
+            posts = ForumPost.query.filter_by(projectID=self.id).order_by(ForumPost.postTime.desc()).all()
+            return posts
+        except Exception as e:
+            print(f"Error fetching forum posts for project {self.id}: {e}")
+            traceback.print_exc()
+            return []
 
 
 

@@ -3,7 +3,7 @@ import os
 import traceback
 from datetime import datetime, timezone
 from werkzeug.utils import secure_filename
-from models import db, init_db, User, AuthToken, Project, Milestone, File, FileVersion, Task, Report, Message
+from models import db, init_db, User, AuthToken, Project, Milestone, File, FileVersion, Task, Report, Message, ForumPost, ForumReply
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from utils.email_utils import send_verification_email, send_password_reset_email
 
@@ -150,6 +150,22 @@ class CMTApp:
                                   
                                    'report_status',
                                      self.report_status)
+
+            # Forum routes
+            self.app.add_url_rule('/project/<int:project_id>/forum',
+                                  'view_project_forum',
+                                  self.view_project_forum)
+            self.app.add_url_rule('/project/<int:project_id>/forum/create_post',
+                                  'create_forum_post',
+                                  self.create_forum_post,
+                                  methods=['GET', 'POST'])
+            self.app.add_url_rule('/forum_post/<int:post_id>',
+                                  'view_forum_post',
+                                  self.view_forum_post)
+            self.app.add_url_rule('/forum_post/<int:post_id>/create_reply',
+                                  'create_forum_reply',
+                                  self.create_forum_reply,
+                                  methods=['POST'])
         except Exception as err:
 
             print(f"Route registr failed: {err}")  # Should probably log this 
@@ -1034,6 +1050,118 @@ class CMTApp:
 
             return {'status': 'error', 
                     'message': f'Error checking status: {str(e)}'}
+
+    # Forum route handlers
+    def view_project_forum(self, project_id):
+        try:
+            project = Project.query.get(project_id)
+            if not project:
+                flash('Project not found!', 'danger')
+                return redirect(url_for('view_projects'))
+
+            posts = project.get_forum_posts() # Use the new model method
+
+            return render_template('project_forum.html', project=project.to_dict(), posts=[post.to_dict() for post in posts])
+        except Exception as e:
+            flash(f'Error fetching forum posts: {str(e)}', 'danger')
+            return redirect(url_for('project_details', project_id=project_id))
+
+    def create_forum_post(self, project_id):
+        try:
+            project = Project.query.get(project_id)
+            if not project:
+                flash('Project not found!', 'danger')
+                # Redirect to a general projects page or an error page
+                return redirect(url_for('view_projects'))
+
+            if request.method == 'POST':
+                title = request.form.get('title')
+                content = request.form.get('content')
+
+                if not title or not content:
+                    flash('Title and content are required!', 'danger')
+                    return render_template('create_forum_post.html', project=project.to_dict())
+
+                # Placeholder for current_user - replace with actual user logic
+                current_user_obj = User.query.first()
+                if not current_user_obj:
+                    flash('You must be logged in to create a post.', 'danger')
+                    # Or redirect to login page: return redirect(url_for('login'))
+                    return redirect(url_for('view_project_forum', project_id=project_id))
+
+
+                new_post = ForumPost(
+                    project_id=project_id,
+                    user_id=current_user_obj.id,
+                    title=title,
+                    content=content
+                )
+                db.session.add(new_post)
+                db.session.commit()
+
+                flash('Forum post created successfully!', 'success')
+                return redirect(url_for('view_project_forum', project_id=project_id))
+
+            # GET request
+            return render_template('create_forum_post.html', project=project.to_dict())
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error creating forum post: {str(e)}', 'danger')
+            return redirect(url_for('view_project_forum', project_id=project_id))
+
+    def view_forum_post(self, post_id):
+        try:
+            post = ForumPost.query.get(post_id)
+            if not post:
+                flash('Forum post not found!', 'danger')
+                # Assuming a general forum or projects page exists
+                return redirect(url_for('view_projects'))
+
+            # Assuming ForumReply has a post_id field and a created_at field
+            replies = ForumReply.query.filter_by(post_id=post_id).order_by(ForumReply.created_at.asc()).all()
+
+            return render_template('view_forum_post.html', post=post.to_dict(), replies=[reply.to_dict() for reply in replies])
+        except Exception as e:
+            flash(f'Error fetching forum post details: {str(e)}', 'danger')
+            # Redirect to project's forum if project_id is available, else to a general page
+            if post and post.project_id:
+                 return redirect(url_for('view_project_forum', project_id=post.project_id))
+            return redirect(url_for('view_projects'))
+
+
+    def create_forum_reply(self, post_id):
+        # This route only handles POST requests as specified in add_url_rule
+        try:
+            post = ForumPost.query.get(post_id)
+            if not post:
+                flash('Forum post not found! Cannot add reply.', 'danger')
+                return redirect(url_for('view_projects')) # Or a more relevant redirect
+
+            content = request.form.get('content')
+            if not content:
+                flash('Reply content cannot be empty!', 'danger')
+                return redirect(url_for('view_forum_post', post_id=post_id))
+
+            # Placeholder for current_user
+            current_user_obj = User.query.first()
+            if not current_user_obj:
+                flash('You must be logged in to reply.', 'danger')
+                return redirect(url_for('view_forum_post', post_id=post_id))
+
+            new_reply = ForumReply(
+                post_id=post_id,
+                user_id=current_user_obj.id,
+                content=content
+            )
+            db.session.add(new_reply)
+            db.session.commit()
+
+            flash('Reply posted successfully!', 'success')
+            return redirect(url_for('view_forum_post', post_id=post_id))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error posting reply: {str(e)}', 'danger')
+            return redirect(url_for('view_forum_post', post_id=post_id))
         
 
 

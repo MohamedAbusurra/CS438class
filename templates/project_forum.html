@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.project_name }} - Forum{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Forum for Project: {{ project.project_name }}</h2>
+    <hr>
+
+    <div class="mb-3">
+        <a href="{{ url_for('create_forum_post', project_id=project.id) }}" class="btn btn-success">Create New Post</a>
+    </div>
+
+    {% if posts %}
+        <ul class="list-group">
+            {% for post in posts %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5><a href="{{ url_for('view_forum_post', post_id=post.postID) }}">{{ post.title }}</a></h5>
+                        <small class="text-muted">
+                            By: {{ post.author.get_full_name() if post.author else "Unknown User" }} |
+                            Posted on: {{ post.postTime | format_datetime if post.postTime else 'N/A' }}
+                            <!-- Assuming format_datetime is a custom filter or use post.postTime.strftime('%Y-%m-%d %H:%M') -->
+                        </small>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{{ post.get_reply_count() if post.get_reply_count is not none else 0 }} Replies</span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No forum posts yet. Be the first to create one!
+        </div>
+    {% endif %}
+
+    <hr>
+    <a href="{{ url_for('project_details', project_id=project.id) }}" class="btn btn-secondary">Back to Project Details</a>
+</div>
+{% endblock %}
