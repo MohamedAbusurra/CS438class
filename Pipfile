@@ -10,8 +10,10 @@ flask-wtf = "*"
 flask-login = "*"
 flask = "*"
 flask-sqlalchemy = "*"
+pytest = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.12"

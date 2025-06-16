@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Forum{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('view_projects') }}">Projects</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('project_details', project_id=post.projectID) }}">Project: {{ post.project.project_name if post.project else 'N/A' }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('view_project_forum', project_id=post.projectID) }}">Forum</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ post.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>{{ post.title }}</h3>
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{ post.content | safe }}</p> <!-- Assuming content can be HTML, otherwise remove |safe -->
+        </div>
+        <div class="card-footer text-muted">
+            Posted by: {{ post.author.get_full_name() if post.author else "Unknown User" }} on {{ post.postTime | format_datetime if post.postTime else 'N/A' }}
+            <!-- Assuming format_datetime filter or use strftime -->
+        </div>
+    </div>
+
+    <a href="{{ url_for('view_project_forum', project_id=post.projectID) }}" class="btn btn-outline-secondary mb-3">Back to Project Forum</a>
+
+    <hr>
+
+    <h4>Replies</h4>
+    {% if replies %}
+        {% for reply in replies %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="card-text">{{ reply.content | safe }}</p> <!-- Assuming content can be HTML -->
+                </div>
+                <div class="card-footer text-muted">
+                    By: {{ reply.author.get_full_name() if reply.author else "Unknown User" }} |
+                    Replied on: {{ reply.replyTime | format_datetime if reply.replyTime else 'N/A' }}
+                    <!-- Assuming format_datetime filter or use strftime -->
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No replies yet. Be the first to reply!
+        </div>
+    {% endif %}
+
+    <hr>
+
+    <h4>Post a Reply</h4>
+    <form method="POST" action="{{ url_for('create_forum_reply', post_id=post.postID) }}">
+        {{ csrf_token_if_needed() }} <!-- Assuming a macro for CSRF token -->
+        <div class="mb-3">
+            <label for="content" class="form-label">Your Reply:</label>
+            <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Reply</button>
+    </form>
+</div>
+{% endblock %}
