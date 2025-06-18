@@ -66,7 +66,7 @@ CMT هي أداة بسيطة لإدارة التعاون، تتيح للمستخ
 
 5. Run the application:
    ```
-   python run.py
+   python app.py
    ```
 
 6. Open your web browser and navigate to:
