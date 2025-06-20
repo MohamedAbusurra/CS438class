@@ -52,33 +52,46 @@ def test_message_creation_and_fields(test_app, fresh_user, other_user):
     then  the row get defaults.
     """
     with test_app.app_context():
-        msg = Message(
+        # Ensure users are in the current session
+        db.session.add(fresh_user)
+        db.session.add(other_user)
+        db.session.commit()
 
+        msg = Message(
             sender_id=fresh_user.id,
             receiver_id=other_user.id,
-
             message_content="cs438",
         )
         db.session.add(msg)
-
         db.session.commit()
 
-        assert msg.messageID is not None          
+        assert msg.messageID is not None
         assert msg.isRead is False                # default
-        assert msg.timestamp <= datetime.now(timezone.utc)
+        # Handle timezone comparison properly
+        now_utc = datetime.now(timezone.utc)
+        if msg.timestamp.tzinfo is None:
+            # If timestamp is naive, compare with naive datetime
+            assert msg.timestamp <= datetime.now()
+        else:
+            # If timestamp is timezone-aware, compare with timezone-aware datetime
+            assert msg.timestamp <= now_utc
         assert msg.get_content() == "cs438"
-        assert str(msg) is not None               
+        assert str(msg) is not None
 
 
 def test_message_empty_content_raises(test_app,  fresh_user,  other_user):
     """constructor must not enbeled  an empty string or false content """
-    with test_app.app_context(): 
+    with test_app.app_context():
+        # Ensure users are in the current session
+        db.session.add(fresh_user)
+        db.session.add(other_user)
+        db.session.commit()
 
         with pytest.raises(ValueError):
             Message(
                 sender_id=fresh_user.id,
                 receiver_id=other_user.id,
-                message_content="",             
+                message_content="",
             )
 
 
@@ -86,25 +99,24 @@ def test_mark_as_read_flag_changes(test_app, fresh_user, other_user):
 
     """mark_as_read() flips the flag – verify via query void-method check"""
     with test_app.app_context():
+        # Ensure users are in the current session
+        db.session.add(fresh_user)
+        db.session.add(other_user)
+        db.session.commit()
 
         msg = Message(
             sender_id=fresh_user.id,
             receiver_id=other_user.id,
-
             message_content="read me",
         )
         db.session.add(msg)
-
-
         db.session.commit()
 
         assert msg.isRead is False
-        msg.mark_as_read()       
-
-        db.session.commit()                       
+        msg.mark_as_read()
+        db.session.commit()
 
         refetched = db.session.get(Message, msg.messageID)
-
         assert refetched.isRead is True
 
 
@@ -113,8 +125,12 @@ def test_mark_as_read_flag_changes(test_app, fresh_user, other_user):
 #  Search 
 
 def _seed_messages(sender: User, receiver: User):
-
     """create three  messages for search scenaruo ."""
+    # Ensure users are in session
+    db.session.add(sender)
+    db.session.add(receiver)
+    db.session.commit()
+
     msgs = [
         Message(sender_id=sender.id, receiver_id=receiver.id,
                 message_content="school"),
@@ -135,12 +151,16 @@ def test_search_by_keyword(test_app, fresh_user, other_user):
                 .filter(Message.content.ilike("%mango%"))
                 .all())
         assert len(hits) == 1
-        assert "school" in hits[0].content
+        assert "mango" in hits[0].content  
 
 
 def test_search_by_date_range(test_app, fresh_user, other_user):
     with test_app.app_context():
-        
+        # make sure user  are in the current session
+        db.session.add(fresh_user)
+        db.session.add(other_user)
+        db.session.commit()
+
         old_msg = Message(
             sender_id=fresh_user.id,
             receiver_id=other_user.id,
@@ -150,15 +170,22 @@ def test_search_by_date_range(test_app, fresh_user, other_user):
         db.session.add(old_msg)
         db.session.commit()
 
-        _seed_messages(fresh_user, other_user) 
+        _seed_messages(fresh_user, other_user)
 
         date_from = datetime.now(timezone.utc) - timedelta(days=1)
 
         recent_only = (Message.query
                        .filter(Message.timestamp >= date_from)
                        .all())
-        assert all(m.timestamp >= date_from for m in recent_only)
 
+        # Handle timezone comparison properly
+        for m in recent_only:
+            if m.timestamp.tzinfo is None:
+                # Convert timezone-aware date_from to naive for comparison
+                date_from_naive = date_from.replace(tzinfo=None)
+                assert m.timestamp >= date_from_naive
+            else:
+                assert m.timestamp >= date_from
 
         assert old_msg not in recent_only
 

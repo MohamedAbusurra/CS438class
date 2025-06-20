@@ -1,21 +1,16 @@
 
-#  Covered classes / methods
+# Covered classes / methods
 #      User
 #           __init__                 
 #          set_password / check_password
-
 #         has_permission
-
 #           can_manage_users
 #           can_assign_roles         
 #          get_full_name
+
 #      AuthToken
-
-
 #           generate_token /  validate_token
 #           is_valid /  invalidate
-#
-#  you can run by this commands run:  pytest -q --cov=models.UserManagement
 
 from __future__ import annotations
 
@@ -127,7 +122,7 @@ def test_has_permission_hierarchy(admin_user, supervisor_user, team_member):
     # team member
     assert team_member.has_permission(User.ROLE_TEAM_MEMBER) is True
 
-    assert team_member.has_permission(User.ROLE_PROJECT_MANAGER) is True   
+    assert team_member.has_permission(User.ROLE_PROJECT_MANAGER) is False
     assert team_member.has_permission(User.ROLE_ADMIN) is False
 
 
@@ -146,7 +141,7 @@ def test_manage_and_assign_flags(admin_user, supervisor_user, team_member):
     # can_assign_roles()  
     assert admin_user.can_assign_roles() is True
 
-    assert supervisor_user.can_assign_roles() is True   
+    assert supervisor_user.can_assign_roles() is False
 
     assert team_member.can_assign_roles() is False
 
@@ -183,7 +178,6 @@ def test_get_full_name_variants(test_app):
 
 
 #  AuthToken 
-# ─────────────────────────────────────────────────────────────
 def test_auth_token_lifecycle(test_app, admin_user):
     """
     generate_token  

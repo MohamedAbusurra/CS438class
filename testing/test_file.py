@@ -180,8 +180,9 @@ def test_file_version_creation_and_dict(test_app):
         file_ = _create_file_record()
 
         ver = FileVersion(
+
             file_id=file_.id,
-            version_number=2,
+            version_number= 2,
             changed_by_id=99,
             version_path=f"/tmp/{file_.file_name}",
         )
@@ -192,3 +193,4 @@ def test_file_version_creation_and_dict(test_app):
         assert d["file_id"] == file_.id
         assert d["version_number"] == 2
         assert d["change_timestamp"] is not None
+        #assert d["change_by_id"] == 99
