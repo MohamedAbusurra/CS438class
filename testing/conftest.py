@@ -50,4 +50,27 @@ def fresh_user(test_app):
         )
         db.session.add(user)
         db.session.commit()
+        # Refresh the user to avoid detached instance errors
+        db.session.refresh(user)
+        return user
+
+
+@pytest.fixture
+def other_user(test_app):
+    """create another user for testing interactions."""
+    with test_app.app_context():
+        import random
+        import string
+        rand_suffix = ''.join(random.choices(string.ascii_lowercase, k=6))
+        user = User(
+            username=f"otheruser_{rand_suffix}",
+            email=f"other_{rand_suffix}@example.com",
+            password="TestPass123",
+            first_name="Other",
+            last_name="User"
+        )
+        db.session.add(user)
+        db.session.commit()
+        # Refresh the user to avoid detached instance errors
+        db.session.refresh(user)
         return user
